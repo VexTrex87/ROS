@@ -1,0 +1,14 @@
+[inputs."assets/firewatch_tower_sunrise.jpg"]
+hash = "7920cbc2b0533c7ddd2d1b96fdf6286b4b40f162a339b49058bacf6b5f1caeb8"
+id = 7025127457
+packable = false
+
+[inputs."assets/ios_blue.jpg"]
+hash = "fddea0397979afa329ebc2151317fd4e02d98a185c77797a4a45e72213894570"
+id = 7025145063
+packable = false
+
+[inputs."assets/zelda_island.jpg"]
+hash = "855bc651060ad1c27cad761372233702b9fb07f5e10b154fe1bae39a8028fc9a"
+id = 7025142713
+packable = false
