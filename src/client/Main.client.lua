@@ -1,5 +1,6 @@
 local Players = game:GetService("Players")
-local player = Players.LocalPlayer
-local Startup = require(player.PlayerScripts.Startup)
+
+local localPlayer = Players.LocalPlayer
+local Startup = require(localPlayer.PlayerScripts:WaitForChild("Startup"))
 
 Startup.init()
