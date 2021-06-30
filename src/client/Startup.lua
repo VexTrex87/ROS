@@ -28,6 +28,15 @@ function Startup.createTaskbar()
         })
         
         button.MouseButton1Click:Connect(application.onClick)
+
+        button.MouseEnter:Connect(function()
+            button.ImageTransparency = 0
+        end)
+
+        button.MouseLeave:Connect(function()
+            button.ImageTransparency = 0.5
+        end)
+
         taskbarChildren[application.Name] = button
     end
 
@@ -86,20 +95,26 @@ function Startup.createInterface()
     interface.Parent = localPlayer.PlayerGui
 end
 
-function Startup.createStorage()
-    local storage = Instance.new("Folder")
-    storage.Name = "Storage"
-    storage.Parent = localPlayer.PlayerScripts
+function Startup.createFiles()
+    local files = localPlayer.PlayerScripts:FindFirstChild("Files")
+    if not files then
+        files = Instance.new("Folder")
+        files.Name = "Files"
+        files.Parent = localPlayer.PlayerScripts
+    end
 
     for i, child in ipairs({"Downloads", "Documents", "Pictures", "Videos", "Audio"}) do
-        local library = Instance.new("Folder")
-        library.Name = child
-        library.Parent = storage
+        local library = files:FindFirstChild(child)
+        if not library then
+            library = Instance.new("Folder")
+            library.Name = child
+            library.Parent = files
+        end
     end
 end
 
 function Startup.init()
-    Startup.createStorage()
+    Startup.createFiles()
     Startup.createInterface()
 end
 

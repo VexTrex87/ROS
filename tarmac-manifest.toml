@@ -1,9 +1,64 @@
+[inputs."assets/Alarm_Clock_Stock.png"]
+hash = "9c73bfbeb34731a831bf7e56700b425910ccb20d356c21fbc4a38a49424aa95c"
+id = 7028033435
+packable = false
+
+[inputs."assets/Audio_Type_Icon.png"]
+hash = "ef20cc61204629ebdb7001f702894997b0ebcc787d470d74efebbebf54fbb1e8"
+id = 7028128299
+packable = false
+
 [inputs."assets/Background.jpg"]
 hash = "fddea0397979afa329ebc2151317fd4e02d98a185c77797a4a45e72213894570"
 id = 7026667770
 packable = false
 
+[inputs."assets/Banana_Stock.png"]
+hash = "069100a56742511eb093e3a8341e99b0929d7db837e9c982248e27a560398424"
+id = 7028033540
+packable = false
+
+[inputs."assets/Book_Stock.png"]
+hash = "bd2fe94e407834b814b29a45d87afe82ded7f95672d1e2c02245165d7be4b2da"
+id = 7028033636
+packable = false
+
+[inputs."assets/Carrot_Stock.png"]
+hash = "4c163d96c3415cec72ee49570884932eaff2ef1ebfa6cdf126f463f6cd55d1e6"
+id = 7028033723
+packable = false
+
+[inputs."assets/Documents_Type_Icon.png"]
+hash = "2d3ac17439496ea7502a450f40d7722f2d3492499c84e080731b20a786139120"
+id = 7028131047
+packable = false
+
+[inputs."assets/Downloads_Type_Icon.png"]
+hash = "15a7a99b7dab474cc434dbd1db0a0ac7bff021e0b1a985962e48913c63b93c16"
+id = 7028131086
+packable = false
+
 [inputs."assets/Files_Icon.png"]
 hash = "c4a337f774e214feb244253d259cb9a8c6355b4f5bae21b3061fcf8fa8a390b8"
 id = 7026667831
+packable = false
+
+[inputs."assets/No_Icon.png"]
+hash = "6e13cdd87b91a2cd80be6c9d7aa3346e071ae3648dc37f59ad255817a1fde476"
+id = 7028131139
+packable = false
+
+[inputs."assets/Pictures_Type_Icon.png"]
+hash = "23195fdba393243024606f387fffeb262be5ce7e12ea817e6899bdb40fa35c53"
+id = 7028131181
+packable = false
+
+[inputs."assets/Science_Stock.png"]
+hash = "f00a43cb61527a177be35647034eb49377190a6a5d03bfb3905c17e4cfc3df6f"
+id = 7028033939
+packable = false
+
+[inputs."assets/Videos_Type_Icon.png"]
+hash = "714f62e066f2db8e60faf5238b4a670d27ac18a4ba4a5cad8a470a04f8a9e943"
+id = 7028131231
 packable = false

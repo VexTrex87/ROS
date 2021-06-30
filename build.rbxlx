@@ -84,27 +84,27 @@
 			<Properties>
 				<BinaryString name="AttributesSerialize"></BinaryString>
 				<CoordinateFrame name="CFrame">
-					<X>20.8625546</X>
-					<Y>3.53918099</Y>
-					<Z>-85.4080505</Z>
-					<R00>0.816319764</R00>
-					<R01>0.0617839657</R01>
-					<R02>-0.574286342</R02>
-					<R10>-0</R10>
-					<R11>0.994262695</R11>
-					<R12>0.106966652</R12>
-					<R20>0.577600241</R20>
-					<R21>-0.0873189941</R21>
-					<R22>0.811636329</R22>
+					<X>-122.711777</X>
+					<Y>15.7213135</Y>
+					<Z>-43.8034439</Z>
+					<R00>0.808192968</R00>
+					<R01>0.189211532</R01>
+					<R02>-0.557694554</R02>
+					<R10>1.49011612e-08</R10>
+					<R11>0.946982026</R11>
+					<R12>0.321286827</R12>
+					<R20>0.588917851</R20>
+					<R21>-0.259661764</R21>
+					<R22>0.765344143</R22>
 				</CoordinateFrame>
 				<Ref name="CameraSubject">null</Ref>
 				<token name="CameraType">0</token>
 				<float name="FieldOfView">70</float>
 				<token name="FieldOfViewMode">0</token>
 				<CoordinateFrame name="Focus">
-					<X>22.0111294</X>
-					<Y>3.32524729</Y>
-					<Z>-87.0313263</Z>
+					<X>-121.59639</X>
+					<Y>15.0787411</Y>
+					<Z>-45.3341293</Z>
 					<R00>1</R00>
 					<R01>0</R01>
 					<R02>0</R02>
@@ -559,6 +559,15 @@ function Startup.createTaskbar()
         })
         
         button.MouseButton1Click:Connect(application.onClick)
+
+        button.MouseEnter:Connect(function()
+            button.ImageTransparency = 0
+        end)
+
+        button.MouseLeave:Connect(function()
+            button.ImageTransparency = 0.5
+        end)
+
         taskbarChildren[application.Name] = button
     end
 
@@ -617,20 +626,26 @@ function Startup.createInterface()
     interface.Parent = localPlayer.PlayerGui
 end
 
-function Startup.createStorage()
-    local storage = Instance.new("Folder")
-    storage.Name = "Storage"
-    storage.Parent = localPlayer.PlayerScripts
+function Startup.createFiles()
+    local files = localPlayer.PlayerScripts:FindFirstChild("Files")
+    if not files then
+        files = Instance.new("Folder")
+        files.Name = "Files"
+        files.Parent = localPlayer.PlayerScripts
+    end
 
     for i, child in ipairs({"Downloads", "Documents", "Pictures", "Videos", "Audio"}) do
-        local library = Instance.new("Folder")
-        library.Name = child
-        library.Parent = storage
+        local library = files:FindFirstChild(child)
+        if not library then
+            library = Instance.new("Folder")
+            library.Name = child
+            library.Parent = files
+        end
     end
 end
 
 function Startup.init()
-    Startup.createStorage()
+    Startup.createFiles()
     Startup.createInterface()
 end
 
@@ -685,20 +700,76 @@ function createTopRightButton(name, position, color)
     })
 end
 
-function createSidebarButton(name, layoutOrder)
-    return createElement("TextButton", {
+function FilesWindow:createSidebarButton(name, layoutOrder)
+    local button = createElement("TextButton", {
         Name = name,
         BackgroundTransparency = 1,
         Size = UDim2.new(1, -20, 0, 30),
         LayoutOrder = layoutOrder,
         Font = Enum.Font.GothamBold,
         Text = name,
-        TextColor3 = Color3.fromRGB(255, 255, 255),
+        TextColor3 = Color3.fromRGB(100, 100, 100),
         TextSize = 16,
         TextXAlignment = Enum.TextXAlignment.Left,
     }, {
         UICorner = createUICorner(UDim.new(0, 5))
     })
+
+    button.MouseButton1Click:Connect(function()
+        self:showFiles(name)
+    end)
+
+    button.MouseEnter:Connect(function()
+        button.TextColor3 = Color3.fromRGB(255, 255, 255)
+    end)
+
+    button.MouseLeave:Connect(function()
+        button.TextColor3 = Color3.fromRGB(100, 100, 100)
+    end)
+
+    return button
+end
+
+function FilesWindow:showFiles(directoryName)
+    local directory = localPlayer.PlayerScripts.Files[directoryName]
+
+    for i, button in ipairs(self.filesInterface.Grid:GetChildren()) do
+        if button:IsA("ImageButton") then
+            button:Destroy()
+        end
+    end
+
+    for i, file in ipairs(directory:GetChildren()) do
+        local source = require(file)
+        local button = createElement("ImageButton", {
+            BackgroundColor3 = Color3.fromRGB(60, 60, 60),
+            Name = file.Name,
+        }, {
+            UICorner = createUICorner(UDim.new(0, 3)),
+            Icon = createElement("ImageLabel", {
+                BackgroundTransparency = 1,
+                AnchorPoint = Vector2.new(0.5, 0),
+                Name = "Icon",
+                Position = UDim2.new(0.5, 0, 0, 5),
+                Size = UDim2.new(0, 40, 0, 40),
+                Image = source.Icon or Assets[directoryName .. "_Type_Icon"] or Assets["No_Icon"],
+            }, {
+                UICorner = createUICorner(UDim.new(0, 3))
+            }),
+            Title = createElement("TextLabel", {
+                BackgroundTransparency = 1,
+                Name = "Title",
+                Position = UDim2.new(0, 0, 0, 50),
+                Size = UDim2.new(1, 0, 0, 10),
+                Font = Enum.Font.GothamBold,
+                TextColor3 = Color3.fromRGB(255, 255, 255),
+                Text = source.Name,
+                TextSize = 12,
+            })
+        })
+
+        button.Parent = self.filesInterface.Grid
+    end
 end
 
 function FilesWindow:onCloseClicked()
@@ -749,7 +820,7 @@ function FilesWindow.new()
         }, {
             UIGridLayout = createElement("UIGridLayout", {
                 CellPadding = UDim2.new(0, 10, 0, 10),
-                CellSize = UDim2.new(0, 85, 0, 75),
+                CellSize = UDim2.new(0, 85, 0, 65),
                 SortOrder = Enum.SortOrder.Name,
             }),
         }), gridChildren,
@@ -760,6 +831,7 @@ function FilesWindow.new()
         }, {
             UICorner = createUICorner(UDim.new(0, 5)),
             Frame = createElement("Frame", {
+                Name = "Sidebar",
                 BackgroundTransparency = 1,
                 Position = UDim2.new(0, 0, 0, 40),
                 Size = UDim2.new(1, 0, 1, -40)
@@ -767,11 +839,11 @@ function FilesWindow.new()
                 UIListLayout = createElement("UIListLayout", {
                     HorizontalAlignment = Enum.HorizontalAlignment.Right
                 }),
-                Downloads = createSidebarButton("Downloads", 0),
-                Documents = createSidebarButton("Documents", 1),
-                Pictures = createSidebarButton("Pictures", 2),
-                Videos = createSidebarButton("Videos", 3),
-                Audio = createSidebarButton("Audio", 4),
+                Downloads = self:createSidebarButton("Downloads", 0),
+                Documents = self:createSidebarButton("Documents", 1),
+                Pictures = self:createSidebarButton("Pictures", 2),
+                Videos = self:createSidebarButton("Videos", 3),
+                Audio = self:createSidebarButton("Audio", 4),
             })
         }),
         Close = createTopRightButton("Close", UDim2.new(1, -5, 0, 5), Color3.fromRGB(255, 0, 0)),
@@ -793,6 +865,7 @@ function FilesWindow.new()
         self:onMinimizeClicked()
     end)
     
+    self:showFiles("Downloads")
     self.filesInterface.Parent = localPlayer.PlayerGui.Interface.Background
 
     return self
@@ -811,6 +884,213 @@ return Files]]></ProtectedString>
 						<int64 name="SourceAssetId">-1</int64>
 						<BinaryString name="Tags"></BinaryString>
 					</Properties>
+				</Item>
+			</Item>
+			<Item class="Folder" referent="RBX97B5A249D6B14C858A7F2A68439CC47E">
+				<Properties>
+					<BinaryString name="AttributesSerialize"></BinaryString>
+					<string name="Name">Files</string>
+					<int64 name="SourceAssetId">-1</int64>
+					<BinaryString name="Tags"></BinaryString>
+				</Properties>
+				<Item class="Folder" referent="RBX350B45A605C54E5E8416464B689FA9A0">
+					<Properties>
+						<BinaryString name="AttributesSerialize"></BinaryString>
+						<string name="Name">Pictures</string>
+						<int64 name="SourceAssetId">-1</int64>
+						<BinaryString name="Tags"></BinaryString>
+					</Properties>
+					<Item class="ModuleScript" referent="RBXC451E82A2F224C73865DAD7AFEB034EB">
+						<Properties>
+							<BinaryString name="AttributesSerialize"></BinaryString>
+							<Content name="LinkedSource"><null></null></Content>
+							<string name="Name">AlarmClock</string>
+							<string name="ScriptGuid">{FBF452C4-61CA-4CFB-B886-2D59D7A54174}</string>
+							<ProtectedString name="Source"><![CDATA[local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Assets = require(ReplicatedStorage.Assets)
+
+return {
+    Name = "Alarm Clock",
+    Type = "Picture",
+    Icon = Assets.Alarm_Clock_Stock,
+    Source = nil,
+}]]></ProtectedString>
+							<int64 name="SourceAssetId">-1</int64>
+							<BinaryString name="Tags"></BinaryString>
+						</Properties>
+					</Item>
+					<Item class="ModuleScript" referent="RBX5203D33C1CA6428DBC131021455F5027">
+						<Properties>
+							<BinaryString name="AttributesSerialize"></BinaryString>
+							<Content name="LinkedSource"><null></null></Content>
+							<string name="Name">Banana</string>
+							<string name="ScriptGuid">{54AEA166-7A8F-47B2-B30A-9389BF87495A}</string>
+							<ProtectedString name="Source"><![CDATA[local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Assets = require(ReplicatedStorage.Assets)
+
+return {
+    Name = "Banana",
+    Type = "Picture",
+    Icon = Assets.Banana_Stock,
+    Source = nil,
+}]]></ProtectedString>
+							<int64 name="SourceAssetId">-1</int64>
+							<BinaryString name="Tags"></BinaryString>
+						</Properties>
+					</Item>
+					<Item class="ModuleScript" referent="RBX3269CDA41EF941F082E3590AAB7AD9B8">
+						<Properties>
+							<BinaryString name="AttributesSerialize"></BinaryString>
+							<Content name="LinkedSource"><null></null></Content>
+							<string name="Name">Book</string>
+							<string name="ScriptGuid">{2862F455-B06B-4F59-92D2-667994640C44}</string>
+							<ProtectedString name="Source"><![CDATA[local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Assets = require(ReplicatedStorage.Assets)
+
+return {
+    Name = "Book",
+    Type = "Picture",
+    Icon = Assets.Book_Stock,
+    Source = nil,
+}]]></ProtectedString>
+							<int64 name="SourceAssetId">-1</int64>
+							<BinaryString name="Tags"></BinaryString>
+						</Properties>
+					</Item>
+					<Item class="ModuleScript" referent="RBX6F67B2EEA326498D8CBBAA6B4102219F">
+						<Properties>
+							<BinaryString name="AttributesSerialize"></BinaryString>
+							<Content name="LinkedSource"><null></null></Content>
+							<string name="Name">Carrot</string>
+							<string name="ScriptGuid">{45D37BAA-BB86-4485-B0E1-C3307412B3BF}</string>
+							<ProtectedString name="Source"><![CDATA[local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Assets = require(ReplicatedStorage.Assets)
+
+return {
+    Name = "Carrot",
+    Type = "Picture",
+    Icon = Assets.Carrot_Stock,
+    Source = nil,
+}]]></ProtectedString>
+							<int64 name="SourceAssetId">-1</int64>
+							<BinaryString name="Tags"></BinaryString>
+						</Properties>
+					</Item>
+					<Item class="ModuleScript" referent="RBX926C231400D2488682F27DAD538FEF9B">
+						<Properties>
+							<BinaryString name="AttributesSerialize"></BinaryString>
+							<Content name="LinkedSource"><null></null></Content>
+							<string name="Name">Science</string>
+							<string name="ScriptGuid">{7FD1904F-BBD1-4AEF-959A-9804067EBC33}</string>
+							<ProtectedString name="Source"><![CDATA[local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Assets = require(ReplicatedStorage.Assets)
+
+return {
+    Name = "Science",
+    Type = "Picture",
+    Icon = Assets.Science_Stock,
+    Source = nil,
+}]]></ProtectedString>
+							<int64 name="SourceAssetId">-1</int64>
+							<BinaryString name="Tags"></BinaryString>
+						</Properties>
+					</Item>
+				</Item>
+				<Item class="Folder" referent="RBXF0193D39EC8F4BD59053AA27E191031C">
+					<Properties>
+						<BinaryString name="AttributesSerialize"></BinaryString>
+						<string name="Name">Videos</string>
+						<int64 name="SourceAssetId">-1</int64>
+						<BinaryString name="Tags"></BinaryString>
+					</Properties>
+					<Item class="ModuleScript" referent="RBXB3E51FBA8EAF47C6A1C11E7E20C3B07F">
+						<Properties>
+							<BinaryString name="AttributesSerialize"></BinaryString>
+							<Content name="LinkedSource"><null></null></Content>
+							<string name="Name">Waves</string>
+							<string name="ScriptGuid">{119D0199-E49C-4B1D-9F22-CAE96835CE95}</string>
+							<ProtectedString name="Source"><![CDATA[return {
+    Name = "Waves",
+    Type = "Video",
+    Icon = nil,
+    Source = nil,
+}]]></ProtectedString>
+							<int64 name="SourceAssetId">-1</int64>
+							<BinaryString name="Tags"></BinaryString>
+						</Properties>
+					</Item>
+				</Item>
+				<Item class="Folder" referent="RBX7138944676BC4192917BAB256EB3793F">
+					<Properties>
+						<BinaryString name="AttributesSerialize"></BinaryString>
+						<string name="Name">Audio</string>
+						<int64 name="SourceAssetId">-1</int64>
+						<BinaryString name="Tags"></BinaryString>
+					</Properties>
+					<Item class="ModuleScript" referent="RBX32B758780BAD41FBADB61D8598829022">
+						<Properties>
+							<BinaryString name="AttributesSerialize"></BinaryString>
+							<Content name="LinkedSource"><null></null></Content>
+							<string name="Name">HappyMusic</string>
+							<string name="ScriptGuid">{75740521-7CDA-466D-A388-40C3B65BFA52}</string>
+							<ProtectedString name="Source"><![CDATA[return {
+    Name = "Happy Music",
+    Type = "Audio",
+    Icon = nil,
+    Source = nil,
+}]]></ProtectedString>
+							<int64 name="SourceAssetId">-1</int64>
+							<BinaryString name="Tags"></BinaryString>
+						</Properties>
+					</Item>
+				</Item>
+				<Item class="Folder" referent="RBXFD1400697FBC41CEAD60EBDF7B3987FF">
+					<Properties>
+						<BinaryString name="AttributesSerialize"></BinaryString>
+						<string name="Name">Downloads</string>
+						<int64 name="SourceAssetId">-1</int64>
+						<BinaryString name="Tags"></BinaryString>
+					</Properties>
+					<Item class="ModuleScript" referent="RBX187B3EA2119C444AADF54F3562D82798">
+						<Properties>
+							<BinaryString name="AttributesSerialize"></BinaryString>
+							<Content name="LinkedSource"><null></null></Content>
+							<string name="Name">EnglishNotes</string>
+							<string name="ScriptGuid">{1AB2EC3C-2156-455B-9D69-C03A1748E16D}</string>
+							<ProtectedString name="Source"><![CDATA[return {
+    Name = "English Notes",
+    Type = "Document",
+    Icon = nil,
+    Source = nil,
+}]]></ProtectedString>
+							<int64 name="SourceAssetId">-1</int64>
+							<BinaryString name="Tags"></BinaryString>
+						</Properties>
+					</Item>
+				</Item>
+				<Item class="Folder" referent="RBX0A304A36687E4B948CFEC0107E155766">
+					<Properties>
+						<BinaryString name="AttributesSerialize"></BinaryString>
+						<string name="Name">Documents</string>
+						<int64 name="SourceAssetId">-1</int64>
+						<BinaryString name="Tags"></BinaryString>
+					</Properties>
+					<Item class="ModuleScript" referent="RBX9B1A6558D1DB47CF84326AC1687D6A85">
+						<Properties>
+							<BinaryString name="AttributesSerialize"></BinaryString>
+							<Content name="LinkedSource"><null></null></Content>
+							<string name="Name">EnglishNotes</string>
+							<string name="ScriptGuid">{1901D630-73D3-43CD-B581-B06C92D4B196}</string>
+							<ProtectedString name="Source"><![CDATA[return {
+    Name = "English Essay",
+    Type = "Document",
+    Icon = nil,
+    Source = nil,
+}]]></ProtectedString>
+							<int64 name="SourceAssetId">-1</int64>
+							<BinaryString name="Tags"></BinaryString>
+						</Properties>
+					</Item>
 				</Item>
 			</Item>
 		</Item>
@@ -1033,8 +1313,19 @@ return Files]]></ProtectedString>
 				<string name="ScriptGuid">{6D9CA339-8A4A-4489-94E4-2390A94AD835}</string>
 				<ProtectedString name="Source"><![CDATA[-- This file was @generated by Tarmac. It is not intended for manual editing.
 return {
+	Alarm_Clock_Stock = "rbxassetid://7028033435",
+	Audio_Type_Icon = "rbxassetid://7028128299",
 	Background = "rbxassetid://7026667770",
+	Banana_Stock = "rbxassetid://7028033540",
+	Book_Stock = "rbxassetid://7028033636",
+	Carrot_Stock = "rbxassetid://7028033723",
+	Documents_Type_Icon = "rbxassetid://7028131047",
+	Downloads_Type_Icon = "rbxassetid://7028131086",
 	Files_Icon = "rbxassetid://7026667831",
+	No_Icon = "rbxassetid://7028131139",
+	Pictures_Type_Icon = "rbxassetid://7028131181",
+	Science_Stock = "rbxassetid://7028033939",
+	Videos_Type_Icon = "rbxassetid://7028131231",
 }]]></ProtectedString>
 				<int64 name="SourceAssetId">-1</int64>
 				<BinaryString name="Tags"></BinaryString>

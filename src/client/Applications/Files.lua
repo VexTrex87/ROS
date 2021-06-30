@@ -31,20 +31,76 @@ function createTopRightButton(name, position, color)
     })
 end
 
-function createSidebarButton(name, layoutOrder)
-    return createElement("TextButton", {
+function FilesWindow:createSidebarButton(name, layoutOrder)
+    local button = createElement("TextButton", {
         Name = name,
         BackgroundTransparency = 1,
         Size = UDim2.new(1, -20, 0, 30),
         LayoutOrder = layoutOrder,
         Font = Enum.Font.GothamBold,
         Text = name,
-        TextColor3 = Color3.fromRGB(255, 255, 255),
+        TextColor3 = Color3.fromRGB(100, 100, 100),
         TextSize = 16,
         TextXAlignment = Enum.TextXAlignment.Left,
     }, {
         UICorner = createUICorner(UDim.new(0, 5))
     })
+
+    button.MouseButton1Click:Connect(function()
+        self:showFiles(name)
+    end)
+
+    button.MouseEnter:Connect(function()
+        button.TextColor3 = Color3.fromRGB(255, 255, 255)
+    end)
+
+    button.MouseLeave:Connect(function()
+        button.TextColor3 = Color3.fromRGB(100, 100, 100)
+    end)
+
+    return button
+end
+
+function FilesWindow:showFiles(directoryName)
+    local directory = localPlayer.PlayerScripts.Files[directoryName]
+
+    for i, button in ipairs(self.filesInterface.Grid:GetChildren()) do
+        if button:IsA("ImageButton") then
+            button:Destroy()
+        end
+    end
+
+    for i, file in ipairs(directory:GetChildren()) do
+        local source = require(file)
+        local button = createElement("ImageButton", {
+            BackgroundColor3 = Color3.fromRGB(60, 60, 60),
+            Name = file.Name,
+        }, {
+            UICorner = createUICorner(UDim.new(0, 3)),
+            Icon = createElement("ImageLabel", {
+                BackgroundTransparency = 1,
+                AnchorPoint = Vector2.new(0.5, 0),
+                Name = "Icon",
+                Position = UDim2.new(0.5, 0, 0, 5),
+                Size = UDim2.new(0, 40, 0, 40),
+                Image = source.Icon or Assets[directoryName .. "_Type_Icon"] or Assets["No_Icon"],
+            }, {
+                UICorner = createUICorner(UDim.new(0, 3))
+            }),
+            Title = createElement("TextLabel", {
+                BackgroundTransparency = 1,
+                Name = "Title",
+                Position = UDim2.new(0, 0, 0, 50),
+                Size = UDim2.new(1, 0, 0, 10),
+                Font = Enum.Font.GothamBold,
+                TextColor3 = Color3.fromRGB(255, 255, 255),
+                Text = source.Name,
+                TextSize = 12,
+            })
+        })
+
+        button.Parent = self.filesInterface.Grid
+    end
 end
 
 function FilesWindow:onCloseClicked()
@@ -95,7 +151,7 @@ function FilesWindow.new()
         }, {
             UIGridLayout = createElement("UIGridLayout", {
                 CellPadding = UDim2.new(0, 10, 0, 10),
-                CellSize = UDim2.new(0, 85, 0, 75),
+                CellSize = UDim2.new(0, 85, 0, 65),
                 SortOrder = Enum.SortOrder.Name,
             }),
         }), gridChildren,
@@ -106,6 +162,7 @@ function FilesWindow.new()
         }, {
             UICorner = createUICorner(UDim.new(0, 5)),
             Frame = createElement("Frame", {
+                Name = "Sidebar",
                 BackgroundTransparency = 1,
                 Position = UDim2.new(0, 0, 0, 40),
                 Size = UDim2.new(1, 0, 1, -40)
@@ -113,11 +170,11 @@ function FilesWindow.new()
                 UIListLayout = createElement("UIListLayout", {
                     HorizontalAlignment = Enum.HorizontalAlignment.Right
                 }),
-                Downloads = createSidebarButton("Downloads", 0),
-                Documents = createSidebarButton("Documents", 1),
-                Pictures = createSidebarButton("Pictures", 2),
-                Videos = createSidebarButton("Videos", 3),
-                Audio = createSidebarButton("Audio", 4),
+                Downloads = self:createSidebarButton("Downloads", 0),
+                Documents = self:createSidebarButton("Documents", 1),
+                Pictures = self:createSidebarButton("Pictures", 2),
+                Videos = self:createSidebarButton("Videos", 3),
+                Audio = self:createSidebarButton("Audio", 4),
             })
         }),
         Close = createTopRightButton("Close", UDim2.new(1, -5, 0, 5), Color3.fromRGB(255, 0, 0)),
@@ -139,6 +196,7 @@ function FilesWindow.new()
         self:onMinimizeClicked()
     end)
     
+    self:showFiles("Downloads")
     self.filesInterface.Parent = localPlayer.PlayerGui.Interface.Background
 
     return self
