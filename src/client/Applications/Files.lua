@@ -6,9 +6,12 @@ local Assets = require(ReplicatedStorage.Assets)
 
 local localPlayer = Players.LocalPlayer
 local Files = {}
+local FilesWindow = {}
+FilesWindow.__index = FilesWindow
 
 Files.Icon = Assets["Files_Icon"]
 Files.Name = "Files"
+Files.Windows = {}
 
 function createUICorner(cornerRadius)
     return createElement("UICorner", {
@@ -44,8 +47,29 @@ function createSidebarButton(name, layoutOrder)
     })
 end
 
-function Files.createInterface()
-    gridChildren = {
+function FilesWindow:onCloseClicked()
+    self.filesInterface:Destroy()
+    table.remove(Files.Windows, table.find(Files.Windows, self))
+end
+
+function FilesWindow:onSizeWindowClicked()
+    local isMinimized = self.filesInterface:GetAttribute("IsMinimized")
+    if isMinimized then
+        self.filesInterface.Size = UDim2.new(1, 0, 1, 0)
+    else
+        self.filesInterface.Size = UDim2.new(0.8, 0, 0.8, 0)
+    end
+    self.filesInterface:SetAttribute("IsMinimized", not isMinimized)
+end
+
+function FilesWindow:onMinimizeClicked()
+    self.filesInterface.Visible = false
+end
+
+function FilesWindow.new()
+    local self = setmetatable({}, FilesWindow)
+
+    local gridChildren = {
         UIGridLayout = createElement("UIGridLayout", {
             CellPadding = UDim2.new(0, 10, 0, 10),
             CellSize = UDim2.new(0, 85, 0, 75),
@@ -53,7 +77,7 @@ function Files.createInterface()
         })
     }    
 
-    local filesInterface = createElement("Frame", {
+    self.filesInterface = createElement("Frame", {
         AnchorPoint = Vector2.new(0.5, 0.5),
         BackgroundTransparency = 0.3,
         BackgroundColor3 = Color3.fromRGB(0, 0, 0),
@@ -97,15 +121,36 @@ function Files.createInterface()
             })
         }),
         Close = createTopRightButton("Close", UDim2.new(1, -5, 0, 5), Color3.fromRGB(255, 0, 0)),
-        Size = createTopRightButton("Size", UDim2.new(1, -30, 0, 5), Color3.fromRGB(255, 255, 0)),
+        SizeWindow = createTopRightButton("SizeWindow", UDim2.new(1, -30, 0, 5), Color3.fromRGB(255, 255, 0)),
         Minimize = createTopRightButton("Minimize", UDim2.new(1, -55, 0, 5), Color3.fromRGB(0, 255, 0)),
     })
 
-    filesInterface.Parent = localPlayer.PlayerGui.Interface.Background
+    self.filesInterface:SetAttribute("IsMinimized", true)
+
+    self.filesInterface.Close.MouseButton1Click:Connect(function()
+        self:onCloseClicked()
+    end)
+
+    self.filesInterface.SizeWindow.MouseButton1Click:Connect(function()
+        self:onSizeWindowClicked()
+    end)
+
+    self.filesInterface.Minimize.MouseButton1Click:Connect(function()
+        self:onMinimizeClicked()
+    end)
+    
+    self.filesInterface.Parent = localPlayer.PlayerGui.Interface.Background
+
+    return self
 end
 
 function Files.onClick()
-    Files.createInterface()
+    if #Files.Windows > 0 then
+        Files.Windows[1].filesInterface.Visible = true
+    else
+        local newWindow = FilesWindow.new()
+        table.insert(Files.Windows, newWindow)
+    end
 end
 
 return Files
