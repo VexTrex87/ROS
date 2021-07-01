@@ -28,14 +28,9 @@ hash = "4c163d96c3415cec72ee49570884932eaff2ef1ebfa6cdf126f463f6cd55d1e6"
 id = 7028033723
 packable = false
 
-[inputs."assets/Documents_Type_Icon.png"]
+[inputs."assets/Document_Type_Icon.png"]
 hash = "2d3ac17439496ea7502a450f40d7722f2d3492499c84e080731b20a786139120"
-id = 7028131047
-packable = false
-
-[inputs."assets/Downloads_Type_Icon.png"]
-hash = "15a7a99b7dab474cc434dbd1db0a0ac7bff021e0b1a985962e48913c63b93c16"
-id = 7028131086
+id = 7029672147
 packable = false
 
 [inputs."assets/Files_Icon.png"]
@@ -43,14 +38,19 @@ hash = "c4a337f774e214feb244253d259cb9a8c6355b4f5bae21b3061fcf8fa8a390b8"
 id = 7026667831
 packable = false
 
+[inputs."assets/LockScreen.png"]
+hash = "7486101845fd589467b065fc664c7b660ec415b54173d992b939bfb38093ae68"
+id = 7029546390
+packable = false
+
 [inputs."assets/No_Icon.png"]
 hash = "6e13cdd87b91a2cd80be6c9d7aa3346e071ae3648dc37f59ad255817a1fde476"
 id = 7028131139
 packable = false
 
-[inputs."assets/Pictures_Type_Icon.png"]
+[inputs."assets/Picture_Type_Icon.png"]
 hash = "23195fdba393243024606f387fffeb262be5ce7e12ea817e6899bdb40fa35c53"
-id = 7028131181
+id = 7029672179
 packable = false
 
 [inputs."assets/Science_Stock.png"]
@@ -58,7 +58,7 @@ hash = "f00a43cb61527a177be35647034eb49377190a6a5d03bfb3905c17e4cfc3df6f"
 id = 7028033939
 packable = false
 
-[inputs."assets/Videos_Type_Icon.png"]
+[inputs."assets/Video_Type_Icon.png"]
 hash = "714f62e066f2db8e60faf5238b4a670d27ac18a4ba4a5cad8a470a04f8a9e943"
-id = 7028131231
+id = 7029672221
 packable = false

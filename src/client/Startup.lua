@@ -4,6 +4,7 @@ local StarterGui = game:GetService("StarterGui")
 
 local createElement = require(ReplicatedStorage.Rovis)
 local Assets = require(ReplicatedStorage.Assets)
+local Helper = require(ReplicatedStorage.Helper)
 
 local localPlayer = Players.LocalPlayer
 local applications = localPlayer.PlayerScripts:WaitForChild("Applications")
@@ -21,10 +22,11 @@ function Startup.createTaskbar()
         local button = createElement("ImageButton", {
             BackgroundTransparency = 1,
             Name = application.Name,
-            Size = UDim2.new(0.8, 0, 0.8, 0),
+            Size = UDim2.new(0.6, 0, 0.6, 0),
             SizeConstraint = Enum.SizeConstraint.RelativeYY,
             Image = application.Icon,
             ImageTransparency = 0.5,
+            ScaleType = Enum.ScaleType.Crop
         })
         
         button.MouseButton1Click:Connect(application.onClick)
@@ -53,8 +55,8 @@ function Startup.createTaskbar()
         AnchorPoint = Vector2.new(0.5, 1),
         BackgroundTransparency = 0.3,
         Position = UDim2.new(0.5, 0, 1, -10),
-        Size = UDim2.new(1, 0, 0, 30),
-        BackgroundColor3 = Color3.fromRGB(30, 30, 40),
+        Size = UDim2.new(1, 0, 0, 40),
+        BackgroundColor3 = Color3.fromRGB(30, 30, 30),
     }, taskbarChildren)
 
     local function taskbarUpdated()
@@ -64,7 +66,7 @@ function Startup.createTaskbar()
                 applicationsCount += 1
             end
         end
-        taskbar.Size = UDim2.new(0, applicationsCount * 30, 0, 30)
+        taskbar.Size = UDim2.new(0, applicationsCount * 40, 0, 40)
     end
 
     taskbarUpdated()
@@ -74,6 +76,58 @@ function Startup.createTaskbar()
     return taskbar
 end
 
+function Startup.createLockScreen()
+    local playerIcon, isReady = Players:GetUserThumbnailAsync(localPlayer.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size420x420)
+    local lockScreen = createElement("ImageLabel", {
+        Name = "LockScreen",
+        Size = UDim2.new(1, 0, 1, 0),
+        Image = Assets["LockScreen"],
+        ScaleType = Enum.ScaleType.Crop,
+    }, {
+        Profile = createElement("Frame", {
+            Name = "Profile",
+            Size = UDim2.new(0, 200, 0, 250),
+            Position = UDim2.new(0.5, 0, 0.5, -200),
+            AnchorPoint = Vector2.new(0.5, 0),
+            BackgroundTransparency = 1
+        }, {
+            Icon = createElement("ImageLabel", {
+                Name = "Icon",
+                Size = UDim2.new(0, 200, 0, 200),
+                BackgroundColor3 = Color3.fromRGB(85, 170, 255),
+                Image = playerIcon,
+            }, {
+                UICorner = Helper.createUICorner(UDim.new(1, 0))
+            }),
+            Username = createElement("TextLabel", {
+                Name = "Username",
+                BackgroundTransparency = 1,
+                Size = UDim2.new(1, 0, 0, 40),
+                Position = UDim2.new(0, 0, 1, -40),
+                TextColor3 = Color3.fromRGB(255, 255, 255),
+                TextSize = 40,
+                Font = Enum.Font.SourceSansSemibold,
+                Text = localPlayer.DisplayName,
+            })
+        }),
+        SignIn = createElement("TextButton", {
+            Name = "SignIn",
+            AnchorPoint = Vector2.new(0.5, 0),
+            Position = UDim2.new(0.5, 0, 0.5, 70),
+            Size = UDim2.new(0, 200, 0, 50),
+            BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+            BackgroundTransparency = 0.3,
+            TextColor3 = Color3.fromRGB(255, 255, 255),
+            TextSize = 30,
+            Text = "Sign In",
+            Font = Enum.Font.SourceSans,
+        }, {
+            UICorner = Helper.createUICorner(UDim.new(0, 3)),
+        })
+    })
+    return lockScreen
+end
+
 function Startup.createInterface()
     StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.All, false)
 
@@ -81,18 +135,24 @@ function Startup.createInterface()
         Name = "Interface",
         IgnoreGuiInset = true,
     }, {
+        LockScreen = Startup.createLockScreen(),
         Background = createElement("ImageLabel", {
             Name = "Background",
             Size = UDim2.new(1, 0, 1, 0),
             BackgroundColor3 = Color3.fromRGB(0, 0, 0),
             Image = Assets["Background"],
-            ScaleType = Enum.ScaleType.Stretch
+            ScaleType = Enum.ScaleType.Crop,
+            Visible = false
         }, {
             Taskbar = Startup.createTaskbar()
         })
     })
 
     interface.Parent = localPlayer.PlayerGui
+
+    interface.LockScreen.SignIn.MouseButton1Click:Wait()
+    interface.LockScreen.Visible = false
+    interface.Background.Visible = true
 end
 
 function Startup.createFiles()
@@ -103,7 +163,7 @@ function Startup.createFiles()
         files.Parent = localPlayer.PlayerScripts
     end
 
-    for i, child in ipairs({"Downloads", "Documents", "Pictures", "Videos", "Audio"}) do
+    for i, child in ipairs({"Documents", "Pictures", "Videos", "Audio"}) do
         local library = files:FindFirstChild(child)
         if not library then
             library = Instance.new("Folder")
@@ -114,6 +174,7 @@ function Startup.createFiles()
 end
 
 function Startup.init()
+    Startup.createLockScreen()
     Startup.createFiles()
     Startup.createInterface()
 end

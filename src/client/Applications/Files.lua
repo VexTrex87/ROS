@@ -3,6 +3,7 @@ local Players = game:GetService("Players")
 
 local createElement = require(ReplicatedStorage.Rovis)
 local Assets = require(ReplicatedStorage.Assets)
+local Helper = require(ReplicatedStorage.Helper)
 
 local localPlayer = Players.LocalPlayer
 local Files = {}
@@ -13,21 +14,15 @@ Files.Icon = Assets["Files_Icon"]
 Files.Name = "Files"
 Files.Windows = {}
 
-function createUICorner(cornerRadius)
-    return createElement("UICorner", {
-        CornerRadius = cornerRadius
-    })
-end
-
 function createTopRightButton(name, position, color)
     return createElement("ImageButton", {
         AnchorPoint = Vector2.new(1, 0),
         BackgroundColor3 = color,
         Name = name,
         Position = position,
-        Size = UDim2.new(0, 20, 0, 20),
+        Size = UDim2.new(0, 15, 0, 15),
     }, {
-        CornerRadius = createUICorner(UDim.new(0, 5))
+        CornerRadius = Helper.createUICorner(UDim.new(1, 0))
     })
 end
 
@@ -37,13 +32,13 @@ function FilesWindow:createSidebarButton(name, layoutOrder)
         BackgroundTransparency = 1,
         Size = UDim2.new(1, -20, 0, 30),
         LayoutOrder = layoutOrder,
-        Font = Enum.Font.GothamBold,
+        Font = Enum.Font.SourceSansSemibold,
         Text = name,
         TextColor3 = Color3.fromRGB(100, 100, 100),
-        TextSize = 16,
+        TextSize = 20,
         TextXAlignment = Enum.TextXAlignment.Left,
     }, {
-        UICorner = createUICorner(UDim.new(0, 5))
+        UICorner = Helper.createUICorner(UDim.new(0, 5))
     })
 
     button.MouseButton1Click:Connect(function()
@@ -76,23 +71,23 @@ function FilesWindow:showFiles(directoryName)
             BackgroundColor3 = Color3.fromRGB(60, 60, 60),
             Name = file.Name,
         }, {
-            UICorner = createUICorner(UDim.new(0, 3)),
+            UICorner = Helper.createUICorner(UDim.new(0, 3)),
             Icon = createElement("ImageLabel", {
                 BackgroundTransparency = 1,
                 AnchorPoint = Vector2.new(0.5, 0),
                 Name = "Icon",
                 Position = UDim2.new(0.5, 0, 0, 5),
                 Size = UDim2.new(0, 40, 0, 40),
-                Image = source.Icon or Assets[directoryName .. "_Type_Icon"] or Assets["No_Icon"],
+                Image = source.Icon or Assets[source["Type"] .. "_Type_Icon"] or Assets["No_Icon"],
             }, {
-                UICorner = createUICorner(UDim.new(0, 3))
+                UICorner = Helper.createUICorner(UDim.new(0, 3))
             }),
             Title = createElement("TextLabel", {
                 BackgroundTransparency = 1,
                 Name = "Title",
                 Position = UDim2.new(0, 0, 0, 50),
                 Size = UDim2.new(1, 0, 0, 10),
-                Font = Enum.Font.GothamBold,
+                Font = Enum.Font.SourceSansSemibold,
                 TextColor3 = Color3.fromRGB(255, 255, 255),
                 Text = source.Name,
                 TextSize = 12,
@@ -141,7 +136,7 @@ function FilesWindow.new()
         Position = UDim2.new(0.5, 0, 0.5, 0),
         Size = UDim2.new(0.8, 0, 0.8, 0),
     }, {
-        UICorner = createUICorner(UDim.new(0, 5)),
+        UICorner = Helper.createUICorner(UDim.new(0, 5)),
         Grid = createElement("Frame", {
             Name = "Grid",
             BackgroundTransparency = 1,
@@ -160,7 +155,7 @@ function FilesWindow.new()
             BackgroundTransparency = 0.3,
             Size = UDim2.new(0, 200, 1, 0),
         }, {
-            UICorner = createUICorner(UDim.new(0, 5)),
+            UICorner = Helper.createUICorner(UDim.new(0, 5)),
             Frame = createElement("Frame", {
                 Name = "Sidebar",
                 BackgroundTransparency = 1,
@@ -168,18 +163,18 @@ function FilesWindow.new()
                 Size = UDim2.new(1, 0, 1, -40)
             }, {
                 UIListLayout = createElement("UIListLayout", {
-                    HorizontalAlignment = Enum.HorizontalAlignment.Right
+                    HorizontalAlignment = Enum.HorizontalAlignment.Right,
+                    SortOrder = Enum.SortOrder.LayoutOrder,
                 }),
-                Downloads = self:createSidebarButton("Downloads", 0),
-                Documents = self:createSidebarButton("Documents", 1),
-                Pictures = self:createSidebarButton("Pictures", 2),
-                Videos = self:createSidebarButton("Videos", 3),
-                Audio = self:createSidebarButton("Audio", 4),
+                Documents = self:createSidebarButton("Documents", 0),
+                Pictures = self:createSidebarButton("Pictures", 1),
+                Videos = self:createSidebarButton("Videos", 2),
+                Audio = self:createSidebarButton("Audio", 3),
             })
         }),
         Close = createTopRightButton("Close", UDim2.new(1, -5, 0, 5), Color3.fromRGB(255, 0, 0)),
-        SizeWindow = createTopRightButton("SizeWindow", UDim2.new(1, -30, 0, 5), Color3.fromRGB(255, 255, 0)),
-        Minimize = createTopRightButton("Minimize", UDim2.new(1, -55, 0, 5), Color3.fromRGB(0, 255, 0)),
+        SizeWindow = createTopRightButton("SizeWindow", UDim2.new(1, -25, 0, 5), Color3.fromRGB(255, 255, 0)),
+        Minimize = createTopRightButton("Minimize", UDim2.new(1, -45, 0, 5), Color3.fromRGB(0, 255, 0)),
     })
 
     self.filesInterface:SetAttribute("IsMinimized", true)
@@ -196,7 +191,7 @@ function FilesWindow.new()
         self:onMinimizeClicked()
     end)
     
-    self:showFiles("Downloads")
+    self:showFiles("Pictures")
     self.filesInterface.Parent = localPlayer.PlayerGui.Interface.Background
 
     return self
@@ -204,7 +199,7 @@ end
 
 function Files.onClick()
     if #Files.Windows > 0 then
-        Files.Windows[1].filesInterface.Visible = true
+        Files.Windows[1].filesInterface.Visible = not Files.Windows[1].filesInterface.Visible
     else
         local newWindow = FilesWindow.new()
         table.insert(Files.Windows, newWindow)
