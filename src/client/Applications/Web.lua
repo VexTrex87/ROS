@@ -1,11 +1,11 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Assets = require(ReplicatedStorage.Configuration.Assets)
 
-local Files = {
-    Name = "Files",
-    Icon = Assets["Files_Icon"],
+local Web = {
+    Name = "Web",
+    Icon = Assets["Web_Icon"],
     IsOnTaskbar = true,
-    TaskbarOrder = 1,
+    TaskbarOrder = 0,
 }
 
-return Files
+return Web
