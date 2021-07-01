@@ -5,5 +5,5 @@ name = "basic-tarmac-example"
 [[inputs]]
 glob = "assets/**/*"
 codegen = true
-codegen-path = "src/shared/Assets.lua"
+codegen-path = "src/shared/Configuration/Assets.lua"
 codegen-base-path = "assets"

@@ -84,27 +84,27 @@
 			<Properties>
 				<BinaryString name="AttributesSerialize"></BinaryString>
 				<CoordinateFrame name="CFrame">
-					<X>-122.711777</X>
-					<Y>15.7213135</Y>
-					<Z>-43.8034439</Z>
-					<R00>0.808192968</R00>
-					<R01>0.189211532</R01>
-					<R02>-0.557694554</R02>
-					<R10>1.49011612e-08</R10>
-					<R11>0.946982026</R11>
-					<R12>0.321286827</R12>
-					<R20>0.588917851</R20>
-					<R21>-0.259661764</R21>
-					<R22>0.765344143</R22>
+					<X>53.564003</X>
+					<Y>13.6023102</Y>
+					<Z>-46.7571869</Z>
+					<R00>-0.582115054</R00>
+					<R01>-0.394174576</R01>
+					<R02>0.711174071</R02>
+					<R10>-0</R10>
+					<R11>0.874638319</R11>
+					<R12>0.48477608</R12>
+					<R20>-0.813106477</R20>
+					<R21>0.282195449</R21>
+					<R22>-0.509140074</R22>
 				</CoordinateFrame>
 				<Ref name="CameraSubject">null</Ref>
 				<token name="CameraType">0</token>
 				<float name="FieldOfView">70</float>
 				<token name="FieldOfViewMode">0</token>
 				<CoordinateFrame name="Focus">
-					<X>-121.59639</X>
-					<Y>15.0787411</Y>
-					<Z>-45.3341293</Z>
+					<X>52.141655</X>
+					<Y>12.6327581</Y>
+					<Z>-45.7389069</Z>
 					<R00>1</R00>
 					<R01>0</R01>
 					<R02>0</R02>
@@ -506,623 +506,227 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 				<int64 name="SourceAssetId">-1</int64>
 				<BinaryString name="Tags"></BinaryString>
 			</Properties>
-			<Item class="LocalScript" referent="RBX0143436AF161463D89506764336A71D5">
+			<Item class="LocalScript" referent="RBXE9BEFDF4D7154CA3BA58B05B07407DE3">
 				<Properties>
 					<BinaryString name="AttributesSerialize"></BinaryString>
 					<bool name="Disabled">false</bool>
 					<Content name="LinkedSource"><null></null></Content>
-					<string name="Name">Main</string>
-					<string name="ScriptGuid">{FA7F37D4-6E57-4FA4-82F4-58E8C5BA5C8B}</string>
+					<string name="Name">Startup</string>
+					<string name="ScriptGuid">{4603B136-CE58-4D11-AE3D-E5D88E3E02CF}</string>
 					<ProtectedString name="Source"><![CDATA[local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local localPlayer = Players.LocalPlayer
-local Startup = require(localPlayer.PlayerScripts:WaitForChild("Startup"))
+local Helper = require(ReplicatedStorage.Modules.Helper)
+local Interface = require(Helper.waitForPath(localPlayer, "PlayerScripts.System.Interface"))
+local Taskbar = require(Helper.waitForPath(localPlayer, "PlayerScripts.System.Taskbar"))
 
-Startup.init()]]></ProtectedString>
+Interface.Create()
+Taskbar.Create()]]></ProtectedString>
 					<int64 name="SourceAssetId">-1</int64>
 					<BinaryString name="Tags"></BinaryString>
 				</Properties>
 			</Item>
-			<Item class="ModuleScript" referent="RBXF20BB0ADFDE1468A9CF6B8BF725E1660">
+			<Item class="Folder" referent="RBXF81334A684104CC8904C1D6BBFC3756B">
 				<Properties>
 					<BinaryString name="AttributesSerialize"></BinaryString>
-					<Content name="LinkedSource"><null></null></Content>
-					<string name="Name">Startup</string>
-					<string name="ScriptGuid">{4261ADCE-BAF1-4804-B8B1-3852E12F0A07}</string>
-					<ProtectedString name="Source"><![CDATA[local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Players = game:GetService("Players")
-local StarterGui = game:GetService("StarterGui")
-
-local createElement = require(ReplicatedStorage.Rovis)
-local Assets = require(ReplicatedStorage.Assets)
-local Helper = require(ReplicatedStorage.Helper)
-
-local localPlayer = Players.LocalPlayer
-local applications = localPlayer.PlayerScripts:WaitForChild("Applications")
-local Startup = {}
-
-function Startup.createTaskbar()
-    local taskbarChildren = {
-        UICorner = createElement("UICorner", {
-            CornerRadius = UDim.new(0, 5)
-        })
-    }
-
-    for i, application in ipairs(applications:GetChildren()) do
-        application = require(application)
-        local button = createElement("ImageButton", {
-            BackgroundTransparency = 1,
-            Name = application.Name,
-            Size = UDim2.new(0.6, 0, 0.6, 0),
-            SizeConstraint = Enum.SizeConstraint.RelativeYY,
-            Image = application.Icon,
-            ImageTransparency = 0.5,
-            ScaleType = Enum.ScaleType.Crop
-        })
-        
-        button.MouseButton1Click:Connect(application.onClick)
-
-        button.MouseEnter:Connect(function()
-            button.ImageTransparency = 0
-        end)
-
-        button.MouseLeave:Connect(function()
-            button.ImageTransparency = 0.5
-        end)
-
-        taskbarChildren[application.Name] = button
-    end
-
-    taskbarChildren["UIListLayout"] = createElement("UIListLayout", {
-        Padding = UDim.new(0, 5),
-        FillDirection = Enum.FillDirection.Horizontal,
-        HorizontalAlignment = Enum.HorizontalAlignment.Center,
-        SortOrder = Enum.SortOrder.Name,
-        VerticalAlignment = Enum.VerticalAlignment.Center,
-    })
-
-    local taskbar = createElement("Frame", {
-        Name = "Taskbar",
-        AnchorPoint = Vector2.new(0.5, 1),
-        BackgroundTransparency = 0.3,
-        Position = UDim2.new(0.5, 0, 1, -10),
-        Size = UDim2.new(1, 0, 0, 40),
-        BackgroundColor3 = Color3.fromRGB(30, 30, 30),
-    }, taskbarChildren)
-
-    local function taskbarUpdated()
-        local applicationsCount = 0
-        for i, application in ipairs(taskbar:GetChildren()) do
-            if application:IsA("ImageButton") then
-                applicationsCount += 1
-            end
-        end
-        taskbar.Size = UDim2.new(0, applicationsCount * 40, 0, 40)
-    end
-
-    taskbarUpdated()
-    taskbar.ChildAdded:Connect(taskbarUpdated)
-    taskbar.ChildRemoved:Connect(taskbarUpdated)
-
-    return taskbar
-end
-
-function Startup.createLockScreen()
-    local playerIcon, isReady = Players:GetUserThumbnailAsync(localPlayer.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size420x420)
-    local lockScreen = createElement("ImageLabel", {
-        Name = "LockScreen",
-        Size = UDim2.new(1, 0, 1, 0),
-        Image = Assets["LockScreen"],
-        ScaleType = Enum.ScaleType.Crop,
-    }, {
-        Profile = createElement("Frame", {
-            Name = "Profile",
-            Size = UDim2.new(0, 200, 0, 250),
-            Position = UDim2.new(0.5, 0, 0.5, -200),
-            AnchorPoint = Vector2.new(0.5, 0),
-            BackgroundTransparency = 1
-        }, {
-            Icon = createElement("ImageLabel", {
-                Name = "Icon",
-                Size = UDim2.new(0, 200, 0, 200),
-                BackgroundColor3 = Color3.fromRGB(85, 170, 255),
-                Image = playerIcon,
-            }, {
-                UICorner = Helper.createUICorner(UDim.new(1, 0))
-            }),
-            Username = createElement("TextLabel", {
-                Name = "Username",
-                BackgroundTransparency = 1,
-                Size = UDim2.new(1, 0, 0, 40),
-                Position = UDim2.new(0, 0, 1, -40),
-                TextColor3 = Color3.fromRGB(255, 255, 255),
-                TextSize = 40,
-                Font = Enum.Font.SourceSansSemibold,
-                Text = localPlayer.DisplayName,
-            })
-        }),
-        SignIn = createElement("TextButton", {
-            Name = "SignIn",
-            AnchorPoint = Vector2.new(0.5, 0),
-            Position = UDim2.new(0.5, 0, 0.5, 70),
-            Size = UDim2.new(0, 200, 0, 50),
-            BackgroundColor3 = Color3.fromRGB(0, 0, 0),
-            BackgroundTransparency = 0.3,
-            TextColor3 = Color3.fromRGB(255, 255, 255),
-            TextSize = 30,
-            Text = "Sign In",
-            Font = Enum.Font.SourceSans,
-        }, {
-            UICorner = Helper.createUICorner(UDim.new(0, 3)),
-        })
-    })
-    return lockScreen
-end
-
-function Startup.createInterface()
-    StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.All, false)
-
-    local interface = createElement("ScreenGui", {
-        Name = "Interface",
-        IgnoreGuiInset = true,
-    }, {
-        LockScreen = Startup.createLockScreen(),
-        Background = createElement("ImageLabel", {
-            Name = "Background",
-            Size = UDim2.new(1, 0, 1, 0),
-            BackgroundColor3 = Color3.fromRGB(0, 0, 0),
-            Image = Assets["Background"],
-            ScaleType = Enum.ScaleType.Crop,
-            Visible = false
-        }, {
-            Taskbar = Startup.createTaskbar()
-        })
-    })
-
-    interface.Parent = localPlayer.PlayerGui
-
-    interface.LockScreen.SignIn.MouseButton1Click:Wait()
-    interface.LockScreen.Visible = false
-    interface.Background.Visible = true
-end
-
-function Startup.createFiles()
-    local files = localPlayer.PlayerScripts:FindFirstChild("Files")
-    if not files then
-        files = Instance.new("Folder")
-        files.Name = "Files"
-        files.Parent = localPlayer.PlayerScripts
-    end
-
-    for i, child in ipairs({"Documents", "Pictures", "Videos", "Audio"}) do
-        local library = files:FindFirstChild(child)
-        if not library then
-            library = Instance.new("Folder")
-            library.Name = child
-            library.Parent = files
-        end
-    end
-end
-
-function Startup.init()
-    Startup.createLockScreen()
-    Startup.createFiles()
-    Startup.createInterface()
-end
-
-return Startup]]></ProtectedString>
+					<string name="Name">System</string>
 					<int64 name="SourceAssetId">-1</int64>
 					<BinaryString name="Tags"></BinaryString>
 				</Properties>
+				<Item class="ModuleScript" referent="RBX6CC2554E56BF47A6852A0A32084059D5">
+					<Properties>
+						<BinaryString name="AttributesSerialize"></BinaryString>
+						<Content name="LinkedSource"><null></null></Content>
+						<string name="Name">Interface</string>
+						<string name="ScriptGuid">{972A2EE0-F9C3-446F-96C5-3D4C7B9CC922}</string>
+						<ProtectedString name="Source"><![CDATA[local Interface = {}
+
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Helper = require(ReplicatedStorage.Modules.Helper)
+local localPlayer = Players.LocalPlayer
+
+function Interface.Create()
+    local interface = Helper.createElement("ScreenGui", {
+        IgnoreGuiInset = true,
+        Name = "Interface",
+    })
+    interface.Parent = localPlayer.PlayerGui
+end
+
+return Interface]]></ProtectedString>
+						<int64 name="SourceAssetId">-1</int64>
+						<BinaryString name="Tags"></BinaryString>
+					</Properties>
+				</Item>
+				<Item class="ModuleScript" referent="RBX29F0271F4ED6404EBD03A82583D732C8">
+					<Properties>
+						<BinaryString name="AttributesSerialize"></BinaryString>
+						<Content name="LinkedSource"><null></null></Content>
+						<string name="Name">Taskbar</string>
+						<string name="ScriptGuid">{72B4AC06-AEAD-4AE5-BE87-3D4A224D9A19}</string>
+						<ProtectedString name="Source"><![CDATA[local Taskbar = {}
+
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local ColorPallete = require(ReplicatedStorage.Configuration.ColorPallete)
+local Assets = require(ReplicatedStorage.Configuration.Assets)
+local Helper = require(ReplicatedStorage.Modules.Helper)
+local localPlayer = Players.LocalPlayer
+
+function Taskbar.Create()
+    local icons = {
+        UIListLayout = Helper.createElement("UIListLayout", {
+            Padding = UDim.new(0, 5),
+            FillDirection = Enum.FillDirection.Horizontal,
+            HorizontalAlignment = Enum.HorizontalAlignment.Center,
+            SortOrder = Enum.SortOrder.Name,
+            VerticalAlignment = Enum.VerticalAlignment.Center,
+        }),
+    }
+
+    for i, application in ipairs(localPlayer.PlayerScripts.Applications:GetChildren()) do
+        local source = require(application)
+        local icon = Helper.createElement("ImageButton", {
+            BackgroundColor3 = ColorPallete.Black,
+            BackgroundTransparency = 0.2,
+            Name = application.Name,
+            Visible = source.IsOnTaskbar,
+            Size = UDim2.new(1, 0, 1, 0),
+            SizeConstraint = Enum.SizeConstraint.RelativeYY,
+        }, {
+            UICorner = Helper.createUICorner(UDim.new(0, 3)),
+            Icon = Helper.createElement("ImageLabel", {
+                AnchorPoint = Vector2.new(0.5, 0.5),
+                BackgroundTransparency = 1,
+                Name = "Icon",
+                Position = UDim2.new(0.5, 0, 0.5, 0),
+                Size = UDim2.new(0.7, 0, 0.7, 0),
+                Image = source.Icon or Assets.No_Icon,
+                ScaleType = Enum.ScaleType.Crop
+            })
+        })
+
+        icon.MouseEnter:Connect(function()
+            icon.BackgroundTransparency = 0.5
+        end)
+
+        icon.MouseLeave:Connect(function()
+            icon.BackgroundTransparency = 0.2
+        end)
+
+        table.insert(icons, icon)
+    end
+
+    local taskbar = Helper.createElement("Frame", {
+        AnchorPoint = Vector2.new(0, 1),
+        BackgroundTransparency = 1,
+        Name = "Taskbar",
+        Position = UDim2.new(0, 0, 1, -10),
+        Size = UDim2.new(1, 0, 0, 40)
+    }, icons)
+    taskbar.Parent = localPlayer.PlayerGui.Interface
+end
+
+return Taskbar]]></ProtectedString>
+						<int64 name="SourceAssetId">-1</int64>
+						<BinaryString name="Tags"></BinaryString>
+					</Properties>
+				</Item>
 			</Item>
-			<Item class="Folder" referent="RBXD07BD2ACB3474FF9A7B7C009FEE00170">
+			<Item class="Folder" referent="RBXEC288FF08BE84583B1CE5F5467EDB3DF">
 				<Properties>
 					<BinaryString name="AttributesSerialize"></BinaryString>
 					<string name="Name">Applications</string>
 					<int64 name="SourceAssetId">-1</int64>
 					<BinaryString name="Tags"></BinaryString>
 				</Properties>
-				<Item class="ModuleScript" referent="RBX0771A92D9255493B95FFCDF6ACBD4516">
+				<Item class="ModuleScript" referent="RBX5FF3C52B2EA24893BC87237509C82390">
 					<Properties>
 						<BinaryString name="AttributesSerialize"></BinaryString>
 						<Content name="LinkedSource"><null></null></Content>
 						<string name="Name">Files</string>
-						<string name="ScriptGuid">{8B7115F1-FED3-484A-9E51-A0F808437DFD}</string>
+						<string name="ScriptGuid">{7448612A-38D9-4E17-A843-7C767155D3D5}</string>
 						<ProtectedString name="Source"><![CDATA[local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Players = game:GetService("Players")
+local Assets = require(ReplicatedStorage.Configuration.Assets)
 
-local createElement = require(ReplicatedStorage.Rovis)
-local Assets = require(ReplicatedStorage.Assets)
-local Helper = require(ReplicatedStorage.Helper)
-
-local localPlayer = Players.LocalPlayer
-local Files = {}
-local FilesWindow = {}
-FilesWindow.__index = FilesWindow
-
-Files.Icon = Assets["Files_Icon"]
-Files.Name = "Files"
-Files.Windows = {}
-
-function createTopRightButton(name, position, color)
-    return createElement("ImageButton", {
-        AnchorPoint = Vector2.new(1, 0),
-        BackgroundColor3 = color,
-        Name = name,
-        Position = position,
-        Size = UDim2.new(0, 15, 0, 15),
-    }, {
-        CornerRadius = Helper.createUICorner(UDim.new(1, 0))
-    })
-end
-
-function FilesWindow:createSidebarButton(name, layoutOrder)
-    local button = createElement("TextButton", {
-        Name = name,
-        BackgroundTransparency = 1,
-        Size = UDim2.new(1, -20, 0, 30),
-        LayoutOrder = layoutOrder,
-        Font = Enum.Font.SourceSansSemibold,
-        Text = name,
-        TextColor3 = Color3.fromRGB(100, 100, 100),
-        TextSize = 20,
-        TextXAlignment = Enum.TextXAlignment.Left,
-    }, {
-        UICorner = Helper.createUICorner(UDim.new(0, 5))
-    })
-
-    button.MouseButton1Click:Connect(function()
-        self:showFiles(name)
-    end)
-
-    button.MouseEnter:Connect(function()
-        button.TextColor3 = Color3.fromRGB(255, 255, 255)
-    end)
-
-    button.MouseLeave:Connect(function()
-        button.TextColor3 = Color3.fromRGB(100, 100, 100)
-    end)
-
-    return button
-end
-
-function FilesWindow:showFiles(directoryName)
-    local directory = localPlayer.PlayerScripts.Files[directoryName]
-
-    for i, button in ipairs(self.filesInterface.Grid:GetChildren()) do
-        if button:IsA("ImageButton") then
-            button:Destroy()
-        end
-    end
-
-    for i, file in ipairs(directory:GetChildren()) do
-        local source = require(file)
-        local button = createElement("ImageButton", {
-            BackgroundColor3 = Color3.fromRGB(60, 60, 60),
-            Name = file.Name,
-        }, {
-            UICorner = Helper.createUICorner(UDim.new(0, 3)),
-            Icon = createElement("ImageLabel", {
-                BackgroundTransparency = 1,
-                AnchorPoint = Vector2.new(0.5, 0),
-                Name = "Icon",
-                Position = UDim2.new(0.5, 0, 0, 5),
-                Size = UDim2.new(0, 40, 0, 40),
-                Image = source.Icon or Assets[source["Type"] .. "_Type_Icon"] or Assets["No_Icon"],
-            }, {
-                UICorner = Helper.createUICorner(UDim.new(0, 3))
-            }),
-            Title = createElement("TextLabel", {
-                BackgroundTransparency = 1,
-                Name = "Title",
-                Position = UDim2.new(0, 0, 0, 50),
-                Size = UDim2.new(1, 0, 0, 10),
-                Font = Enum.Font.SourceSansSemibold,
-                TextColor3 = Color3.fromRGB(255, 255, 255),
-                Text = source.Name,
-                TextSize = 12,
-            })
-        })
-
-        button.Parent = self.filesInterface.Grid
-    end
-end
-
-function FilesWindow:onCloseClicked()
-    self.filesInterface:Destroy()
-    table.remove(Files.Windows, table.find(Files.Windows, self))
-end
-
-function FilesWindow:onSizeWindowClicked()
-    local isMinimized = self.filesInterface:GetAttribute("IsMinimized")
-    if isMinimized then
-        self.filesInterface.Size = UDim2.new(1, 0, 1, 0)
-    else
-        self.filesInterface.Size = UDim2.new(0.8, 0, 0.8, 0)
-    end
-    self.filesInterface:SetAttribute("IsMinimized", not isMinimized)
-end
-
-function FilesWindow:onMinimizeClicked()
-    self.filesInterface.Visible = false
-end
-
-function FilesWindow.new()
-    local self = setmetatable({}, FilesWindow)
-
-    local gridChildren = {
-        UIGridLayout = createElement("UIGridLayout", {
-            CellPadding = UDim2.new(0, 10, 0, 10),
-            CellSize = UDim2.new(0, 85, 0, 75),
-            SortOrder = Enum.SortOrder.Name,
-        })
-    }    
-
-    self.filesInterface = createElement("Frame", {
-        AnchorPoint = Vector2.new(0.5, 0.5),
-        BackgroundTransparency = 0.3,
-        BackgroundColor3 = Color3.fromRGB(0, 0, 0),
-        Name = "Files",
-        Position = UDim2.new(0.5, 0, 0.5, 0),
-        Size = UDim2.new(0.8, 0, 0.8, 0),
-    }, {
-        UICorner = Helper.createUICorner(UDim.new(0, 5)),
-        Grid = createElement("Frame", {
-            Name = "Grid",
-            BackgroundTransparency = 1,
-            Position = UDim2.new(0, 220, 0, 40),
-            Size = UDim2.new(1, -235, 1, -70),
-            ClipsDescendants = true,
-        }, {
-            UIGridLayout = createElement("UIGridLayout", {
-                CellPadding = UDim2.new(0, 10, 0, 10),
-                CellSize = UDim2.new(0, 85, 0, 65),
-                SortOrder = Enum.SortOrder.Name,
-            }),
-        }), gridChildren,
-        Sidebar = createElement("Frame", {
-            BackgroundColor3 = Color3.fromRGB(50, 50, 50),
-            BackgroundTransparency = 0.3,
-            Size = UDim2.new(0, 200, 1, 0),
-        }, {
-            UICorner = Helper.createUICorner(UDim.new(0, 5)),
-            Frame = createElement("Frame", {
-                Name = "Sidebar",
-                BackgroundTransparency = 1,
-                Position = UDim2.new(0, 0, 0, 40),
-                Size = UDim2.new(1, 0, 1, -40)
-            }, {
-                UIListLayout = createElement("UIListLayout", {
-                    HorizontalAlignment = Enum.HorizontalAlignment.Right,
-                    SortOrder = Enum.SortOrder.LayoutOrder,
-                }),
-                Documents = self:createSidebarButton("Documents", 0),
-                Pictures = self:createSidebarButton("Pictures", 1),
-                Videos = self:createSidebarButton("Videos", 2),
-                Audio = self:createSidebarButton("Audio", 3),
-            })
-        }),
-        Close = createTopRightButton("Close", UDim2.new(1, -5, 0, 5), Color3.fromRGB(255, 0, 0)),
-        SizeWindow = createTopRightButton("SizeWindow", UDim2.new(1, -25, 0, 5), Color3.fromRGB(255, 255, 0)),
-        Minimize = createTopRightButton("Minimize", UDim2.new(1, -45, 0, 5), Color3.fromRGB(0, 255, 0)),
-    })
-
-    self.filesInterface:SetAttribute("IsMinimized", true)
-
-    self.filesInterface.Close.MouseButton1Click:Connect(function()
-        self:onCloseClicked()
-    end)
-
-    self.filesInterface.SizeWindow.MouseButton1Click:Connect(function()
-        self:onSizeWindowClicked()
-    end)
-
-    self.filesInterface.Minimize.MouseButton1Click:Connect(function()
-        self:onMinimizeClicked()
-    end)
-    
-    self:showFiles("Pictures")
-    self.filesInterface.Parent = localPlayer.PlayerGui.Interface.Background
-
-    return self
-end
-
-function Files.onClick()
-    if #Files.Windows > 0 then
-        Files.Windows[1].filesInterface.Visible = not Files.Windows[1].filesInterface.Visible
-    else
-        local newWindow = FilesWindow.new()
-        table.insert(Files.Windows, newWindow)
-    end
-end
+local Files = {
+    Name = "Files",
+    Icon = Assets["Files_Icon"],
+    IsOnTaskbar = true,
+    TaskbarOrder = 1,
+}
 
 return Files]]></ProtectedString>
 						<int64 name="SourceAssetId">-1</int64>
 						<BinaryString name="Tags"></BinaryString>
 					</Properties>
 				</Item>
-			</Item>
-			<Item class="Folder" referent="RBX97B5A249D6B14C858A7F2A68439CC47E">
-				<Properties>
-					<BinaryString name="AttributesSerialize"></BinaryString>
-					<string name="Name">Files</string>
-					<int64 name="SourceAssetId">-1</int64>
-					<BinaryString name="Tags"></BinaryString>
-				</Properties>
-				<Item class="Folder" referent="RBX350B45A605C54E5E8416464B689FA9A0">
+				<Item class="ModuleScript" referent="RBX5E441C8C61794D549D3013E745CD18AF">
 					<Properties>
 						<BinaryString name="AttributesSerialize"></BinaryString>
-						<string name="Name">Pictures</string>
+						<Content name="LinkedSource"><null></null></Content>
+						<string name="Name">View</string>
+						<string name="ScriptGuid">{A917CC13-0578-4330-BC43-E765E8010235}</string>
+						<ProtectedString name="Source"><![CDATA[local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Assets = require(ReplicatedStorage.Configuration.Assets)
+
+local View = {
+    Name = "View",
+    Icon = Assets["View_Icon"],
+    IsOnTaskbar = false,
+    TaskbarOrder = 2
+}
+
+return View]]></ProtectedString>
 						<int64 name="SourceAssetId">-1</int64>
 						<BinaryString name="Tags"></BinaryString>
 					</Properties>
-					<Item class="ModuleScript" referent="RBXC451E82A2F224C73865DAD7AFEB034EB">
-						<Properties>
-							<BinaryString name="AttributesSerialize"></BinaryString>
-							<Content name="LinkedSource"><null></null></Content>
-							<string name="Name">AlarmClock</string>
-							<string name="ScriptGuid">{FBF452C4-61CA-4CFB-B886-2D59D7A54174}</string>
-							<ProtectedString name="Source"><![CDATA[local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Assets = require(ReplicatedStorage.Assets)
-
-return {
-    Name = "Alarm Clock",
-    Type = "Picture",
-    Icon = Assets.Alarm_Clock_Stock,
-    Source = nil,
-}]]></ProtectedString>
-							<int64 name="SourceAssetId">-1</int64>
-							<BinaryString name="Tags"></BinaryString>
-						</Properties>
-					</Item>
-					<Item class="ModuleScript" referent="RBX5203D33C1CA6428DBC131021455F5027">
-						<Properties>
-							<BinaryString name="AttributesSerialize"></BinaryString>
-							<Content name="LinkedSource"><null></null></Content>
-							<string name="Name">Banana</string>
-							<string name="ScriptGuid">{54AEA166-7A8F-47B2-B30A-9389BF87495A}</string>
-							<ProtectedString name="Source"><![CDATA[local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Assets = require(ReplicatedStorage.Assets)
-
-return {
-    Name = "Banana",
-    Type = "Picture",
-    Icon = Assets.Banana_Stock,
-    Source = nil,
-}]]></ProtectedString>
-							<int64 name="SourceAssetId">-1</int64>
-							<BinaryString name="Tags"></BinaryString>
-						</Properties>
-					</Item>
-					<Item class="ModuleScript" referent="RBX3269CDA41EF941F082E3590AAB7AD9B8">
-						<Properties>
-							<BinaryString name="AttributesSerialize"></BinaryString>
-							<Content name="LinkedSource"><null></null></Content>
-							<string name="Name">Book</string>
-							<string name="ScriptGuid">{2862F455-B06B-4F59-92D2-667994640C44}</string>
-							<ProtectedString name="Source"><![CDATA[local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Assets = require(ReplicatedStorage.Assets)
-
-return {
-    Name = "Book",
-    Type = "Picture",
-    Icon = Assets.Book_Stock,
-    Source = nil,
-}]]></ProtectedString>
-							<int64 name="SourceAssetId">-1</int64>
-							<BinaryString name="Tags"></BinaryString>
-						</Properties>
-					</Item>
-					<Item class="ModuleScript" referent="RBX6F67B2EEA326498D8CBBAA6B4102219F">
-						<Properties>
-							<BinaryString name="AttributesSerialize"></BinaryString>
-							<Content name="LinkedSource"><null></null></Content>
-							<string name="Name">Carrot</string>
-							<string name="ScriptGuid">{45D37BAA-BB86-4485-B0E1-C3307412B3BF}</string>
-							<ProtectedString name="Source"><![CDATA[local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Assets = require(ReplicatedStorage.Assets)
-
-return {
-    Name = "Carrot",
-    Type = "Picture",
-    Icon = Assets.Carrot_Stock,
-    Source = nil,
-}]]></ProtectedString>
-							<int64 name="SourceAssetId">-1</int64>
-							<BinaryString name="Tags"></BinaryString>
-						</Properties>
-					</Item>
-					<Item class="ModuleScript" referent="RBX926C231400D2488682F27DAD538FEF9B">
-						<Properties>
-							<BinaryString name="AttributesSerialize"></BinaryString>
-							<Content name="LinkedSource"><null></null></Content>
-							<string name="Name">Science</string>
-							<string name="ScriptGuid">{7FD1904F-BBD1-4AEF-959A-9804067EBC33}</string>
-							<ProtectedString name="Source"><![CDATA[local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Assets = require(ReplicatedStorage.Assets)
-
-return {
-    Name = "Science",
-    Type = "Picture",
-    Icon = Assets.Science_Stock,
-    Source = nil,
-}]]></ProtectedString>
-							<int64 name="SourceAssetId">-1</int64>
-							<BinaryString name="Tags"></BinaryString>
-						</Properties>
-					</Item>
 				</Item>
-				<Item class="Folder" referent="RBXF0193D39EC8F4BD59053AA27E191031C">
+				<Item class="ModuleScript" referent="RBX0F0DF7DD471142FDB42E8E84B8C94BE5">
 					<Properties>
 						<BinaryString name="AttributesSerialize"></BinaryString>
-						<string name="Name">Videos</string>
+						<Content name="LinkedSource"><null></null></Content>
+						<string name="Name">Web</string>
+						<string name="ScriptGuid">{62E0716B-0480-4700-BC4C-A10ECFD1E188}</string>
+						<ProtectedString name="Source"><![CDATA[local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Assets = require(ReplicatedStorage.Configuration.Assets)
+
+local Web = {
+    Name = "Web",
+    Icon = Assets["Web_Icon"],
+    IsOnTaskbar = true,
+    TaskbarOrder = 0,
+}
+
+return Web]]></ProtectedString>
 						<int64 name="SourceAssetId">-1</int64>
 						<BinaryString name="Tags"></BinaryString>
 					</Properties>
-					<Item class="ModuleScript" referent="RBXB3E51FBA8EAF47C6A1C11E7E20C3B07F">
-						<Properties>
-							<BinaryString name="AttributesSerialize"></BinaryString>
-							<Content name="LinkedSource"><null></null></Content>
-							<string name="Name">Waves</string>
-							<string name="ScriptGuid">{119D0199-E49C-4B1D-9F22-CAE96835CE95}</string>
-							<ProtectedString name="Source"><![CDATA[return {
-    Name = "Waves",
-    Type = "Video",
-    Icon = nil,
-    Source = nil,
-}]]></ProtectedString>
-							<int64 name="SourceAssetId">-1</int64>
-							<BinaryString name="Tags"></BinaryString>
-						</Properties>
-					</Item>
 				</Item>
-				<Item class="Folder" referent="RBX7138944676BC4192917BAB256EB3793F">
+				<Item class="ModuleScript" referent="RBX61DA474EB2874B28B51B1EBFE21B1C36">
 					<Properties>
 						<BinaryString name="AttributesSerialize"></BinaryString>
-						<string name="Name">Audio</string>
+						<Content name="LinkedSource"><null></null></Content>
+						<string name="Name">Calculator</string>
+						<string name="ScriptGuid">{03F4992E-EBC7-47DD-93C6-3650367B68EC}</string>
+						<ProtectedString name="Source"><![CDATA[local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Assets = require(ReplicatedStorage.Configuration.Assets)
+
+local Calculator = {
+    Name = "Calculator",
+    Icon = Assets["Calculator_Icon"],
+    IsOnTaskbar = true,
+    TaskbarOrder = 3,
+}
+
+return Calculator]]></ProtectedString>
 						<int64 name="SourceAssetId">-1</int64>
 						<BinaryString name="Tags"></BinaryString>
 					</Properties>
-					<Item class="ModuleScript" referent="RBX32B758780BAD41FBADB61D8598829022">
-						<Properties>
-							<BinaryString name="AttributesSerialize"></BinaryString>
-							<Content name="LinkedSource"><null></null></Content>
-							<string name="Name">HappyMusic</string>
-							<string name="ScriptGuid">{75740521-7CDA-466D-A388-40C3B65BFA52}</string>
-							<ProtectedString name="Source"><![CDATA[return {
-    Name = "Happy Music",
-    Type = "Audio",
-    Icon = nil,
-    Source = nil,
-}]]></ProtectedString>
-							<int64 name="SourceAssetId">-1</int64>
-							<BinaryString name="Tags"></BinaryString>
-						</Properties>
-					</Item>
-				</Item>
-				<Item class="Folder" referent="RBX0A304A36687E4B948CFEC0107E155766">
-					<Properties>
-						<BinaryString name="AttributesSerialize"></BinaryString>
-						<string name="Name">Documents</string>
-						<int64 name="SourceAssetId">-1</int64>
-						<BinaryString name="Tags"></BinaryString>
-					</Properties>
-					<Item class="ModuleScript" referent="RBX9B1A6558D1DB47CF84326AC1687D6A85">
-						<Properties>
-							<BinaryString name="AttributesSerialize"></BinaryString>
-							<Content name="LinkedSource"><null></null></Content>
-							<string name="Name">EnglishNotes</string>
-							<string name="ScriptGuid">{1901D630-73D3-43CD-B581-B06C92D4B196}</string>
-							<ProtectedString name="Source"><![CDATA[return {
-    Name = "English Essay",
-    Type = "Document",
-    Icon = nil,
-    Source = nil,
-}]]></ProtectedString>
-							<int64 name="SourceAssetId">-1</int64>
-							<BinaryString name="Tags"></BinaryString>
-						</Properties>
-					</Item>
 				</Item>
 			</Item>
 		</Item>
@@ -1337,40 +941,23 @@ return {
 			<int64 name="SourceAssetId">-1</int64>
 			<BinaryString name="Tags"></BinaryString>
 		</Properties>
-		<Item class="ModuleScript" referent="RBX90E97F0D0AC8409DB6E6EEFBEBE34BB0">
+		<Item class="Folder" referent="RBXB70D406A1C7D43C0A623897FAEC3641C">
 			<Properties>
 				<BinaryString name="AttributesSerialize"></BinaryString>
-				<Content name="LinkedSource"><null></null></Content>
-				<string name="Name">Assets</string>
-				<string name="ScriptGuid">{6D9CA339-8A4A-4489-94E4-2390A94AD835}</string>
-				<ProtectedString name="Source"><![CDATA[-- This file was @generated by Tarmac. It is not intended for manual editing.
-return {
-	Alarm_Clock_Stock = "rbxassetid://7028033435",
-	Audio_Type_Icon = "rbxassetid://7028128299",
-	Background = "rbxassetid://7026667770",
-	Banana_Stock = "rbxassetid://7028033540",
-	Book_Stock = "rbxassetid://7028033636",
-	Carrot_Stock = "rbxassetid://7028033723",
-	Document_Type_Icon = "rbxassetid://7029672147",
-	Files_Icon = "rbxassetid://7026667831",
-	LockScreen = "rbxassetid://7029546390",
-	No_Icon = "rbxassetid://7028131139",
-	Picture_Type_Icon = "rbxassetid://7029672179",
-	Science_Stock = "rbxassetid://7028033939",
-	Video_Type_Icon = "rbxassetid://7029672221",
-}]]></ProtectedString>
+				<string name="Name">Modules</string>
 				<int64 name="SourceAssetId">-1</int64>
 				<BinaryString name="Tags"></BinaryString>
 			</Properties>
-		</Item>
-		<Item class="ModuleScript" referent="RBX122937DB73484E2CBE55A8ED95ABAA1F">
-			<Properties>
-				<BinaryString name="AttributesSerialize"></BinaryString>
-				<Content name="LinkedSource"><null></null></Content>
-				<string name="Name">Rovis</string>
-				<string name="ScriptGuid">{C8785202-F9B8-4FB6-B1B2-5CCE00316118}</string>
-				<ProtectedString name="Source"><![CDATA[return function(className: string, properties: table, subelement: table): instance
-    -- create element based on class name
+			<Item class="ModuleScript" referent="RBX0C168E07BDF845278FB43AC01E47480D">
+				<Properties>
+					<BinaryString name="AttributesSerialize"></BinaryString>
+					<Content name="LinkedSource"><null></null></Content>
+					<string name="Name">Helper</string>
+					<string name="ScriptGuid">{C4E54942-A077-458C-901C-84025D5B9E4D}</string>
+					<ProtectedString name="Source"><![CDATA[local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Helper = {}
+
+function Helper.createElement(className, properties, subelement)
     assert(className, "Missing Parameter 1: className (string)")
     local newElement
     local success, errorMessage = pcall(function()
@@ -1378,63 +965,315 @@ return {
     end)
     assert(success, "Rovis Error: Unable to create element with the className (" .. className .. "). Error Message: " .. tostring(errorMessage))
 
-    -- set properties
     for propertyName, propertyValue in pairs(properties or {}) do
         assert(propertyName, "Rovis Error: Missing key (property name) for properties dictionary")
         assert(propertyName, "Rovis Error: Missing value (property value) for properties dictionary")
 
-        local keys = string.split(propertyName, ":")
-        if keys[1]:lower() == "event" then
-            -- check if property name is an event
-            local event = newElement[keys[2]]
-            assert(event, "Rovis Error: Event (" .. keys[2] .. ") does not exist.")
-
-            -- connect callback function to event
-            assert(typeof(propertyValue) == "function", "Rovis Error: Callback function for event (" .. keys[2] .. ") is not a function")
-            success, errorMessage = pcall(function()
-                event:Connect(propertyValue)
-            end)
-            assert(success, "Rovis Error: Unable to connect callback function with event (" .. keys[2] .. "). Error Message: " .. tostring(errorMessage))
-        else
-            -- if the property name is a property of the element, set the value
-            success, errorMessage = pcall(function()
-                newElement[propertyName] = propertyValue
-            end)
-            assert(success, "Rovis Error: Unable to set property value (" .. tostring(propertyValue) .. ") for property name (" .. tostring(propertyName) .. "). Error Message: " .. tostring(errorMessage))
-        end
+        success, errorMessage = pcall(function()
+            newElement[propertyName] = propertyValue
+        end)
+        assert(success, "Rovis Error: Unable to set property value (" .. tostring(propertyValue) .. ") for property name (" .. tostring(propertyName) .. "). Error Message: " .. tostring(errorMessage))
     end
 
-    -- add subelements
     for _, subelementInstance in pairs(subelement or {}) do
         subelementInstance.Parent = newElement
     end
 
     return newElement
-end]]></ProtectedString>
-				<int64 name="SourceAssetId">-1</int64>
-				<BinaryString name="Tags"></BinaryString>
-			</Properties>
-		</Item>
-		<Item class="ModuleScript" referent="RBX0C7BAF226CEA4720925E29BD8854C523">
-			<Properties>
-				<BinaryString name="AttributesSerialize"></BinaryString>
-				<Content name="LinkedSource"><null></null></Content>
-				<string name="Name">Helper</string>
-				<string name="ScriptGuid">{8319FD45-AC21-443B-9238-68BD8341F955}</string>
-				<ProtectedString name="Source"><![CDATA[local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local createElement = require(ReplicatedStorage.Rovis)
-local Helper = {}
+end
 
 function Helper.createUICorner(cornerRadius)
-    return createElement("UICorner", {
+    return Helper.createElement("UICorner", {
         CornerRadius = cornerRadius
     })
 end
 
+function Helper.createTopRightButton(name, position, color)
+    return Helper.createElement("ImageButton", {
+        AnchorPoint = Vector2.new(1, 0),
+        BackgroundColor3 = color,
+        Name = name,
+        Position = position,
+        Size = UDim2.new(0, 15, 0, 15),
+    }, {
+        CornerRadius = Helper.createUICorner(UDim.new(1, 0))
+    })
+end
+
+function Helper.waitForPath(target, path, maxWait)
+    local BAD_ARG_ERROR="%s is not a valid %s"
+
+	assert(typeof(target) == "Instance", BAD_ARG_ERROR:format("Argument 1", "Instance"))
+	assert(typeof(path) == "string", BAD_ARG_ERROR:format("Argument 2", "string"))
+	if maxWait then
+		assert(typeof(maxWait) == "number", BAD_ARG_ERROR:format("Argument 3", "number"))
+	end
+
+	local children = string.split(path,".")
+	local currentChild
+	local yieldDuration = tick()
+	for _, segment in pairs(children) do
+		currentChild = maxWait and target:WaitForChild(segment, yieldDuration + maxWait - tick()) or target:WaitForChild(segment)
+		if currentChild then
+			target = currentChild
+		else
+			return
+		end
+	end
+
+	return currentChild
+end
+
 return Helper]]></ProtectedString>
+					<int64 name="SourceAssetId">-1</int64>
+					<BinaryString name="Tags"></BinaryString>
+				</Properties>
+			</Item>
+		</Item>
+		<Item class="Folder" referent="RBXDA42AF07F1AF4160AE460A5950D7CA6E">
+			<Properties>
+				<BinaryString name="AttributesSerialize"></BinaryString>
+				<string name="Name">Configuration</string>
 				<int64 name="SourceAssetId">-1</int64>
 				<BinaryString name="Tags"></BinaryString>
 			</Properties>
+			<Item class="ModuleScript" referent="RBX5D439F739E7049C3AC47D474F587576A">
+				<Properties>
+					<BinaryString name="AttributesSerialize"></BinaryString>
+					<Content name="LinkedSource"><null></null></Content>
+					<string name="Name">Assets</string>
+					<string name="ScriptGuid">{F41633DD-9967-4CC4-8D43-4846F40662B5}</string>
+					<ProtectedString name="Source"><![CDATA[-- This file was @generated by Tarmac. It is not intended for manual editing.
+return {
+	Alarm_Clock_Stock = "rbxassetid://7028033435",
+	Audio_Type_Icon = "rbxassetid://7028128299",
+	Background = "rbxassetid://7026667770",
+	Banana_Stock = "rbxassetid://7028033540",
+	Book_Stock = "rbxassetid://7028033636",
+	Calculator_Icon = "rbxassetid://7033021339",
+	Carrot_Stock = "rbxassetid://7028033723",
+	Document_Type_Icon = "rbxassetid://7029672147",
+	Files_Icon = "rbxassetid://7033014552",
+	LockScreen = "rbxassetid://7029546390",
+	No_Icon = "rbxassetid://7028131139",
+	Picture_Type_Icon = "rbxassetid://7029672179",
+	Science_Stock = "rbxassetid://7028033939",
+	Video_Type_Icon = "rbxassetid://7029672221",
+	View_Icon = "rbxassetid://7033021388",
+	Web_Icon = "rbxassetid://7033014647",
+}]]></ProtectedString>
+					<int64 name="SourceAssetId">-1</int64>
+					<BinaryString name="Tags"></BinaryString>
+				</Properties>
+			</Item>
+			<Item class="ModuleScript" referent="RBXFA7A50C022D44532BF8C895A79105E7D">
+				<Properties>
+					<BinaryString name="AttributesSerialize"></BinaryString>
+					<Content name="LinkedSource"><null></null></Content>
+					<string name="Name">ColorPallete</string>
+					<string name="ScriptGuid">{D359C990-2206-4D56-B722-17212E839702}</string>
+					<ProtectedString name="Source"><![CDATA[return {
+    Red = Color3.fromRGB(232, 17, 35),
+    Orange = Color3.fromRGB(255, 140, 0),
+    Yellow = Color3.fromRGB(255, 241, 0),
+    Green = Color3.fromRGB(0, 158, 73),
+    LightBlue = Color3.fromRGB(0, 188, 242),
+    DarkBlue = Color3.fromRGB(0, 24, 143),
+    Purple = Color3.fromRGB(104, 33, 122),
+    Pink = Color3.fromRGB(236, 0, 140),
+    LightBlack = Color3.fromRGB(60, 60, 60), -- Any unfocused black
+    Black = Color3.fromRGB(30, 30, 30), -- Any black
+    DarkBlack = Color3.fromRGB(0, 0, 0), -- Void color / any black text
+    White = Color3.fromRGB(255, 255, 255), -- Any white text
+    DarkWhite = Color3.fromRGB(200, 200, 200), -- Unfocused white text
+}]]></ProtectedString>
+					<int64 name="SourceAssetId">-1</int64>
+					<BinaryString name="Tags"></BinaryString>
+				</Properties>
+			</Item>
+		</Item>
+		<Item class="Folder" referent="RBX06B4D44FB0724F98801691048C662D8F">
+			<Properties>
+				<BinaryString name="AttributesSerialize"></BinaryString>
+				<string name="Name">Files</string>
+				<int64 name="SourceAssetId">-1</int64>
+				<BinaryString name="Tags"></BinaryString>
+			</Properties>
+			<Item class="Folder" referent="RBX88ACF47DFFDE4B788094D986ACEE0277">
+				<Properties>
+					<BinaryString name="AttributesSerialize"></BinaryString>
+					<string name="Name">Audio</string>
+					<int64 name="SourceAssetId">-1</int64>
+					<BinaryString name="Tags"></BinaryString>
+				</Properties>
+				<Item class="ModuleScript" referent="RBXDF9F82662AE04B168171501EC583B464">
+					<Properties>
+						<BinaryString name="AttributesSerialize"></BinaryString>
+						<Content name="LinkedSource"><null></null></Content>
+						<string name="Name">HappyMusic</string>
+						<string name="ScriptGuid">{32055456-BF4C-400E-B962-06CB901426F2}</string>
+						<ProtectedString name="Source"><![CDATA[return {
+    Name = "Happy Music",
+    Type = "Audio",
+    Icon = nil,
+    Source = nil,
+}]]></ProtectedString>
+						<int64 name="SourceAssetId">-1</int64>
+						<BinaryString name="Tags"></BinaryString>
+					</Properties>
+				</Item>
+			</Item>
+			<Item class="Folder" referent="RBX5DBECDEB32B9462EB8697D9E76EB3208">
+				<Properties>
+					<BinaryString name="AttributesSerialize"></BinaryString>
+					<string name="Name">Documents</string>
+					<int64 name="SourceAssetId">-1</int64>
+					<BinaryString name="Tags"></BinaryString>
+				</Properties>
+				<Item class="ModuleScript" referent="RBX6E0D400150A44A91955E3C7B18A5CCC6">
+					<Properties>
+						<BinaryString name="AttributesSerialize"></BinaryString>
+						<Content name="LinkedSource"><null></null></Content>
+						<string name="Name">EnglishNotes</string>
+						<string name="ScriptGuid">{24CE5ED5-4BB7-4F28-BAFA-33B563EA3085}</string>
+						<ProtectedString name="Source"><![CDATA[return {
+    Name = "English Essay",
+    Type = "Document",
+    Icon = nil,
+    Source = nil,
+}]]></ProtectedString>
+						<int64 name="SourceAssetId">-1</int64>
+						<BinaryString name="Tags"></BinaryString>
+					</Properties>
+				</Item>
+			</Item>
+			<Item class="Folder" referent="RBX6AC0868666F6452ABB59BDF213EEDBE4">
+				<Properties>
+					<BinaryString name="AttributesSerialize"></BinaryString>
+					<string name="Name">Pictures</string>
+					<int64 name="SourceAssetId">-1</int64>
+					<BinaryString name="Tags"></BinaryString>
+				</Properties>
+				<Item class="ModuleScript" referent="RBX46D0925CB62C4FDF8DE345E6AD6EA322">
+					<Properties>
+						<BinaryString name="AttributesSerialize"></BinaryString>
+						<Content name="LinkedSource"><null></null></Content>
+						<string name="Name">AlarmClock</string>
+						<string name="ScriptGuid">{7B946426-B449-49B7-AB98-54BC6B0C893E}</string>
+						<ProtectedString name="Source"><![CDATA[local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Assets = require(ReplicatedStorage.Modules.Assets)
+
+return {
+    Name = "Alarm Clock",
+    Type = "Picture",
+    Icon = Assets.Alarm_Clock_Stock,
+    Source = Assets.Alarm_Clock_Stock,
+}]]></ProtectedString>
+						<int64 name="SourceAssetId">-1</int64>
+						<BinaryString name="Tags"></BinaryString>
+					</Properties>
+				</Item>
+				<Item class="ModuleScript" referent="RBXB24EFD0CB39A44E4951C020CE7D86462">
+					<Properties>
+						<BinaryString name="AttributesSerialize"></BinaryString>
+						<Content name="LinkedSource"><null></null></Content>
+						<string name="Name">Banana</string>
+						<string name="ScriptGuid">{2D34EFB8-6443-4399-97F8-1EE5317A48F7}</string>
+						<ProtectedString name="Source"><![CDATA[local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Assets = require(ReplicatedStorage.Modules.Assets)
+
+return {
+    Name = "Banana",
+    Type = "Picture",
+    Icon = Assets.Banana_Stock,
+    Source = Assets.Banana_Stock,
+}]]></ProtectedString>
+						<int64 name="SourceAssetId">-1</int64>
+						<BinaryString name="Tags"></BinaryString>
+					</Properties>
+				</Item>
+				<Item class="ModuleScript" referent="RBX7CE55C7DBE284DA8B14F2B21365A9037">
+					<Properties>
+						<BinaryString name="AttributesSerialize"></BinaryString>
+						<Content name="LinkedSource"><null></null></Content>
+						<string name="Name">Book</string>
+						<string name="ScriptGuid">{9935B1EE-FCE0-478A-B1BB-E450E0B45A79}</string>
+						<ProtectedString name="Source"><![CDATA[local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Assets = require(ReplicatedStorage.Modules.Assets)
+
+return {
+    Name = "Book",
+    Type = "Picture",
+    Icon = Assets.Book_Stock,
+    Source = Assets.Book_Stock,
+}]]></ProtectedString>
+						<int64 name="SourceAssetId">-1</int64>
+						<BinaryString name="Tags"></BinaryString>
+					</Properties>
+				</Item>
+				<Item class="ModuleScript" referent="RBX71B505BC56B54C849110D71C0D789BBC">
+					<Properties>
+						<BinaryString name="AttributesSerialize"></BinaryString>
+						<Content name="LinkedSource"><null></null></Content>
+						<string name="Name">Carrot</string>
+						<string name="ScriptGuid">{7490701D-1297-4FEF-8655-3FE9A61971DB}</string>
+						<ProtectedString name="Source"><![CDATA[local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Assets = require(ReplicatedStorage.Modules.Assets)
+
+return {
+    Name = "Carrot",
+    Type = "Picture",
+    Icon = Assets.Carrot_Stock,
+    Source = Assets.Carrot_Stock,
+}]]></ProtectedString>
+						<int64 name="SourceAssetId">-1</int64>
+						<BinaryString name="Tags"></BinaryString>
+					</Properties>
+				</Item>
+				<Item class="ModuleScript" referent="RBXEA05E458A526429A93D247B8D6FA37A8">
+					<Properties>
+						<BinaryString name="AttributesSerialize"></BinaryString>
+						<Content name="LinkedSource"><null></null></Content>
+						<string name="Name">Science</string>
+						<string name="ScriptGuid">{32A3369F-7912-497B-B5AA-167CCAC5B148}</string>
+						<ProtectedString name="Source"><![CDATA[local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Assets = require(ReplicatedStorage.Modules.Assets)
+
+return {
+    Name = "Science",
+    Type = "Picture",
+    Icon = Assets.Science_Stock,
+    Source = Assets.Science_Stock,
+}]]></ProtectedString>
+						<int64 name="SourceAssetId">-1</int64>
+						<BinaryString name="Tags"></BinaryString>
+					</Properties>
+				</Item>
+			</Item>
+			<Item class="Folder" referent="RBX5EBE05D99C6E41F0BBEE288FBF3B856E">
+				<Properties>
+					<BinaryString name="AttributesSerialize"></BinaryString>
+					<string name="Name">Videos</string>
+					<int64 name="SourceAssetId">-1</int64>
+					<BinaryString name="Tags"></BinaryString>
+				</Properties>
+				<Item class="ModuleScript" referent="RBX186E72FAA4EC417188DDA68413A37B2F">
+					<Properties>
+						<BinaryString name="AttributesSerialize"></BinaryString>
+						<Content name="LinkedSource"><null></null></Content>
+						<string name="Name">Waves</string>
+						<string name="ScriptGuid">{8AD5DDB5-A316-45FA-A44F-7A346ACF8FBA}</string>
+						<ProtectedString name="Source"><![CDATA[return {
+    Name = "Waves",
+    Type = "Video",
+    Icon = nil,
+    Source = nil,
+}]]></ProtectedString>
+						<int64 name="SourceAssetId">-1</int64>
+						<BinaryString name="Tags"></BinaryString>
+					</Properties>
+				</Item>
+			</Item>
 		</Item>
 	</Item>
 	<Item class="LuaWebService" referent="RBX9A7E817D7B184331A7739FCAFA38B82A">
