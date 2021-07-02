@@ -84,27 +84,27 @@
 			<Properties>
 				<BinaryString name="AttributesSerialize"></BinaryString>
 				<CoordinateFrame name="CFrame">
-					<X>53.564003</X>
-					<Y>13.6023102</Y>
-					<Z>-46.7571869</Z>
-					<R00>-0.582115054</R00>
-					<R01>-0.394174576</R01>
-					<R02>0.711174071</R02>
-					<R10>-0</R10>
-					<R11>0.874638319</R11>
-					<R12>0.48477608</R12>
-					<R20>-0.813106477</R20>
-					<R21>0.282195449</R21>
-					<R22>-0.509140074</R22>
+					<X>105.417976</X>
+					<Y>-27.7379398</Y>
+					<Z>-7.61794519</Z>
+					<R00>-0.999750495</R00>
+					<R01>0.00670955703</R01>
+					<R02>-0.0213088915</R02>
+					<R10>4.65661343e-10</R10>
+					<R11>0.953833878</R11>
+					<R12>0.300334811</R12>
+					<R20>0.0223402567</R20>
+					<R21>0.300259888</R21>
+					<R22>-0.953595757</R22>
 				</CoordinateFrame>
 				<Ref name="CameraSubject">null</Ref>
 				<token name="CameraType">0</token>
 				<float name="FieldOfView">70</float>
 				<token name="FieldOfViewMode">0</token>
 				<CoordinateFrame name="Focus">
-					<X>52.141655</X>
-					<Y>12.6327581</Y>
-					<Z>-45.7389069</Z>
+					<X>105.460594</X>
+					<Y>-28.3386097</Y>
+					<Z>-5.71075296</Z>
 					<R00>1</R00>
 					<R01>0</R01>
 					<R02>0</R02>
@@ -520,9 +520,11 @@ local localPlayer = Players.LocalPlayer
 local Helper = require(ReplicatedStorage.Modules.Helper)
 local Interface = require(Helper.waitForPath(localPlayer, "PlayerScripts.System.Interface"))
 local Taskbar = require(Helper.waitForPath(localPlayer, "PlayerScripts.System.Taskbar"))
+local Wallpaper = require(Helper.waitForPath(localPlayer, "PlayerScripts.System.Wallpaper"))
 
 Interface.Create()
-Taskbar.Create()]]></ProtectedString>
+Taskbar.Create()
+Wallpaper.Create()]]></ProtectedString>
 					<int64 name="SourceAssetId">-1</int64>
 					<BinaryString name="Tags"></BinaryString>
 				</Properties>
@@ -591,6 +593,7 @@ function Taskbar.Create()
     for i, application in ipairs(localPlayer.PlayerScripts.Applications:GetChildren()) do
         local source = require(application)
         local icon = Helper.createElement("ImageButton", {
+            AutoButtonColor = false,
             BackgroundColor3 = ColorPallete.Black,
             BackgroundTransparency = 0.2,
             Name = application.Name,
@@ -611,11 +614,19 @@ function Taskbar.Create()
         })
 
         icon.MouseEnter:Connect(function()
-            icon.BackgroundTransparency = 0.5
+            icon.BackgroundTransparency = 0.4
         end)
 
         icon.MouseLeave:Connect(function()
             icon.BackgroundTransparency = 0.2
+        end)
+
+        icon.MouseButton1Down:Connect(function()
+            icon.BackgroundTransparency = 0.6
+        end)
+
+        icon.MouseButton1Up:Connect(function()
+            icon.BackgroundTransparency = 0.4
         end)
 
         table.insert(icons, icon)
@@ -626,12 +637,45 @@ function Taskbar.Create()
         BackgroundTransparency = 1,
         Name = "Taskbar",
         Position = UDim2.new(0, 0, 1, -10),
-        Size = UDim2.new(1, 0, 0, 40)
+        Size = UDim2.new(1, 0, 0, 40),
+        ZIndex = 10,
     }, icons)
     taskbar.Parent = localPlayer.PlayerGui.Interface
 end
 
 return Taskbar]]></ProtectedString>
+						<int64 name="SourceAssetId">-1</int64>
+						<BinaryString name="Tags"></BinaryString>
+					</Properties>
+				</Item>
+				<Item class="ModuleScript" referent="RBXF9280EB410AE40EEA72AA826247457E3">
+					<Properties>
+						<BinaryString name="AttributesSerialize"></BinaryString>
+						<Content name="LinkedSource"><null></null></Content>
+						<string name="Name">Wallpaper</string>
+						<string name="ScriptGuid">{AB1E0540-B49B-4C05-917B-B02B3E8F39DD}</string>
+						<ProtectedString name="Source"><![CDATA[local Wallpaper = {}
+
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
+
+local Assets = require(ReplicatedStorage.Configuration.Assets)
+local Helper = require(ReplicatedStorage.Modules.Helper)
+
+local localPlayer = Players.LocalPlayer
+
+function Wallpaper.Create()
+    local wallpaper = Helper.createElement("ImageLabel", {
+        Name = "Wallpaper",
+        Size = UDim2.new(1, 0, 1, 0),
+        ZIndex = 0,
+        Image = Assets["Background"],
+        ScaleType = Enum.ScaleType.Crop,
+    })
+    wallpaper.Parent = localPlayer.PlayerGui:WaitForChild("Interface")
+end
+
+return Wallpaper]]></ProtectedString>
 						<int64 name="SourceAssetId">-1</int64>
 						<BinaryString name="Tags"></BinaryString>
 					</Properties>
