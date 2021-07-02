@@ -58,6 +58,10 @@ function Taskbar.Create()
             icon.BackgroundTransparency = 0.4
         end)
 
+        icon.MouseButton1Click:Connect(function()
+            source.New()
+        end)
+
         table.insert(icons, icon)
     end
 

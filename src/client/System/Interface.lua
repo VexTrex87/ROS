@@ -14,4 +14,8 @@ function Interface.Create()
     interface.Parent = localPlayer.PlayerGui
 end
 
+function Interface.CreateWindow(window)
+    return window
+end
+
 return Interface
