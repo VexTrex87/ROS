@@ -7,6 +7,7 @@ return {
     DarkBlue = Color3.fromRGB(0, 24, 143),
     Purple = Color3.fromRGB(104, 33, 122),
     Pink = Color3.fromRGB(236, 0, 140),
+    LighterBlack = Color3.fromRGB(90, 90, 90), -- Any focused black
     LightBlack = Color3.fromRGB(60, 60, 60), -- Any unfocused black
     Black = Color3.fromRGB(30, 30, 30), -- Any black
     DarkBlack = Color3.fromRGB(0, 0, 0), -- Void color / any black text
