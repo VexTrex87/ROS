@@ -22,6 +22,7 @@ function Taskbar.Create()
     for i, application in ipairs(localPlayer.PlayerScripts.Applications:GetChildren()) do
         local source = require(application)
         local icon = Helper.createElement("ImageButton", {
+            AutoButtonColor = false,
             BackgroundColor3 = ColorPallete.Black,
             BackgroundTransparency = 0.2,
             Name = application.Name,
@@ -42,11 +43,19 @@ function Taskbar.Create()
         })
 
         icon.MouseEnter:Connect(function()
-            icon.BackgroundTransparency = 0.5
+            icon.BackgroundTransparency = 0.4
         end)
 
         icon.MouseLeave:Connect(function()
             icon.BackgroundTransparency = 0.2
+        end)
+
+        icon.MouseButton1Down:Connect(function()
+            icon.BackgroundTransparency = 0.6
+        end)
+
+        icon.MouseButton1Up:Connect(function()
+            icon.BackgroundTransparency = 0.4
         end)
 
         table.insert(icons, icon)
@@ -57,7 +66,8 @@ function Taskbar.Create()
         BackgroundTransparency = 1,
         Name = "Taskbar",
         Position = UDim2.new(0, 0, 1, -10),
-        Size = UDim2.new(1, 0, 0, 40)
+        Size = UDim2.new(1, 0, 0, 40),
+        ZIndex = 10,
     }, icons)
     taskbar.Parent = localPlayer.PlayerGui.Interface
 end
