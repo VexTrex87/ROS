@@ -84,9 +84,9 @@
 			<Properties>
 				<BinaryString name="AttributesSerialize"></BinaryString>
 				<CoordinateFrame name="CFrame">
-					<X>94.565361</X>
-					<Y>-27.1196785</Y>
-					<Z>-15.7025013</Z>
+					<X>90.9339142</X>
+					<Y>-19.5367336</Y>
+					<Z>-28.1247215</Z>
 					<R00>-0.707107782</R00>
 					<R01>-0.212368593</R01>
 					<R02>0.674461424</R02>
@@ -102,9 +102,9 @@
 				<float name="FieldOfView">70</float>
 				<token name="FieldOfViewMode">0</token>
 				<CoordinateFrame name="Focus">
-					<X>93.2164383</X>
-					<Y>-27.7203484</Y>
-					<Z>-14.3535748</Z>
+					<X>89.5849915</X>
+					<Y>-20.1374035</Y>
+					<Z>-26.775795</Z>
 					<R00>1</R00>
 					<R01>0</R01>
 					<R02>0</R02>
@@ -546,8 +546,11 @@ Wallpaper.Create()]]></ProtectedString>
 
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local StarterGui = game:GetService("StarterGui")
 
 local Helper = require(ReplicatedStorage.Modules.Helper)
+local ColorPalette = require(ReplicatedStorage.Configuration.ColorPalette)
+local Assets = require(ReplicatedStorage.Configuration.Assets)
 local localPlayer = Players.LocalPlayer
 
 function Interface.Create()
@@ -556,9 +559,74 @@ function Interface.Create()
         Name = "Interface",
     })
     interface.Parent = localPlayer.PlayerGui
+    StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.All, false)
 end
 
 function Interface.CreateWindow(window)
+    local topRightFrame = Helper.createElement("Frame", {
+        AnchorPoint = Vector2.new(1, 0),
+        BackgroundTransparency = 1,
+        Name = "TopRightFrame",
+        Position = UDim2.new(1, 0, 0, 0),
+        Size = UDim2.new(0, 60, 0, 20),
+    }, {
+        Close = Helper.createElement("ImageButton", {
+            AnchorPoint = Vector2.new(1, 0),
+            BackgroundColor3 = ColorPalette.Red,
+            Name = "Close",
+            Position = UDim2.new(1, 0, 0, 0),
+            Size = UDim2.new(0, 20, 0, 20),
+        }, {
+            UICorner = Helper.createUICorner(UDim.new(0, 3)),
+        }),
+        Maximize = Helper.createElement("ImageButton", {
+            AnchorPoint = Vector2.new(1, 0),
+            BackgroundColor3 = ColorPalette.Yellow,
+            Name = "Maximize",
+            Position = UDim2.new(1, -20, 0, 0),
+            Size = UDim2.new(0, 20, 0, 20),
+        }, {
+            UICorner = Helper.createUICorner(UDim.new(0, 3)),
+        }),
+        Minimize = Helper.createElement("ImageButton", {
+            AnchorPoint = Vector2.new(1, 0),
+            BackgroundColor3 = ColorPalette.Green,
+            Name = "Minimize",
+            Position = UDim2.new(1, -40, 0, 0),
+            Size = UDim2.new(0, 20, 0, 20),
+        }, {
+            UICorner = Helper.createUICorner(UDim.new(0, 3)),
+        }),
+    })
+
+    topRightFrame.Close.MouseButton1Click:Connect(function()
+        window:Destroy()
+    end)
+
+    topRightFrame.Maximize.MouseButton1Click:Connect(function()
+        local isMaximized = window:GetAttribute("IsMaximized")
+        if isMaximized then
+            window.Size = UDim2.new(0.8, 0, 0.8, 0)
+        else
+            window.Size = UDim2.new(1, 0, 1, 0)
+        end
+        window:SetAttribute("IsMaximized", not isMaximized)
+    end)
+
+    topRightFrame.Minimize.MouseButton1Click:Connect(function()
+        window.Visible = not window.Visible
+    end)
+
+    window:SetAttribute("IsMaximized", false)
+    topRightFrame.Parent = window
+
+    localPlayer.PlayerGui.Interface.Taskbar[window.Name].Opened.Visible = true
+    window.AncestryChanged:Connect(function(child, parent)
+        if not parent then
+            localPlayer.PlayerGui.Interface.Taskbar[window.Name].Opened.Visible = false
+        end
+    end)
+
     return window
 end
 
@@ -578,7 +646,7 @@ return Interface]]></ProtectedString>
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local ColorPallete = require(ReplicatedStorage.Configuration.ColorPallete)
+local ColorPalette = require(ReplicatedStorage.Configuration.ColorPalette)
 local Assets = require(ReplicatedStorage.Configuration.Assets)
 local Helper = require(ReplicatedStorage.Modules.Helper)
 local localPlayer = Players.LocalPlayer
@@ -598,7 +666,7 @@ function Taskbar.Create()
         local source = require(application)
         local icon = Helper.createElement("ImageButton", {
             AutoButtonColor = false,
-            BackgroundColor3 = ColorPallete.Black,
+            BackgroundColor3 = ColorPalette.Black,
             BackgroundTransparency = 0.2,
             Name = application.Name,
             Visible = source.IsOnTaskbar,
@@ -614,6 +682,16 @@ function Taskbar.Create()
                 Size = UDim2.new(0.7, 0, 0.7, 0),
                 Image = source.Icon or Assets.No_Icon,
                 ScaleType = Enum.ScaleType.Crop
+            }),
+            Opened = Helper.createElement("Frame", {
+                BackgroundColor3 = ColorPalette.Black,
+                BackgroundTransparency = 0.3,
+                Name = "Opened",
+                Position = UDim2.new(0, 0, 1, 2),
+                Size = UDim2.new(1, 0, 0, 4),
+                Visible = false,
+            }, {
+                UICorner = Helper.createUICorner(UDim.new(0, 3))
             })
         })
 
@@ -634,7 +712,12 @@ function Taskbar.Create()
         end)
 
         icon.MouseButton1Click:Connect(function()
-            source.New()
+            local currentWindow = localPlayer.PlayerGui.Interface:FindFirstChild(application.Name)
+            if currentWindow then
+                currentWindow.Visible = true
+            else
+                source.New()
+            end
         end)
 
         table.insert(icons, icon)
@@ -706,7 +789,7 @@ return Wallpaper]]></ProtectedString>
 local Players = game:GetService("Players")
 
 local Assets = require(ReplicatedStorage.Configuration.Assets)
-local ColorPallete = require(ReplicatedStorage.Configuration.ColorPallete)
+local ColorPalette = require(ReplicatedStorage.Configuration.ColorPalette)
 local Helper = require(ReplicatedStorage.Modules.Helper)
 
 local localPlayer = Players.LocalPlayer
@@ -732,7 +815,7 @@ function Files.New()
         local configuration = require(library._Configuration)
         local libraryButton = Helper.createElement("ImageButton", {
             AutoButtonColor = false,
-            BackgroundColor3 = ColorPallete.LighterBlack,
+            BackgroundColor3 = ColorPalette.LighterBlack,
             BackgroundTransparency = 1,
             Name = library.Name,
             Size = UDim2.new(1, 0, 0, 40),
@@ -773,14 +856,14 @@ function Files.New()
 
     self.Window = Helper.createElement("Frame", {
         AnchorPoint = Vector2.new(0.5, 0.5),
-        BackgroundColor3 = ColorPallete.Black,
+        BackgroundColor3 = ColorPalette.Black,
         Name = "Files",
         Position = UDim2.new(0.5, 0, 0.5, 0),
         Size = UDim2.new(0.8, 0, 0.8, 0),
     }, {
         UICorner = Helper.createUICorner(UDim.new(0, 3)),
         Sidebar = Helper.createElement("Frame", {
-            BackgroundColor3 = ColorPallete.LightBlack,
+            BackgroundColor3 = ColorPalette.LightBlack,
             Name = "Sidebar",
             Size = UDim2.new(0, 200, 1, 0),
         }, {
@@ -790,9 +873,11 @@ function Files.New()
                 BackgroundTransparency = 1,
                 Position = UDim2.new(0, 0, 0.5, 0),
                 Size = UDim2.new(1, 0, 1, -40),
+                Image = nil,
             }, sidebarChildren)
         })
     })
+    self.Window = Interface.CreateWindow(self.Window)
     self.Window.Parent = localPlayer.PlayerGui.Interface
 
     return self
@@ -1190,9 +1275,12 @@ return {
 	Book_Stock = "rbxassetid://7028033636",
 	Calculator_Icon = "rbxassetid://7033021339",
 	Carrot_Stock = "rbxassetid://7028033723",
+	Close_Icon = "rbxassetid://7039234799",
 	Document_Type_Icon = "rbxassetid://7038510431",
 	Files_Icon = "rbxassetid://7033014552",
 	LockScreen = "rbxassetid://7029546390",
+	Maximize_Icon = "rbxassetid://7039234845",
+	Minimize_Icon = "rbxassetid://7039234891",
 	No_Icon = "rbxassetid://7028131139",
 	Picture_Type_Icon = "rbxassetid://7038484070",
 	Science_Stock = "rbxassetid://7028033939",
@@ -1204,12 +1292,12 @@ return {
 					<BinaryString name="Tags"></BinaryString>
 				</Properties>
 			</Item>
-			<Item class="ModuleScript" referent="RBXFA7A50C022D44532BF8C895A79105E7D">
+			<Item class="ModuleScript" referent="RBX5FA55EFA0D8943D8ADF99591AE0BCEDB">
 				<Properties>
 					<BinaryString name="AttributesSerialize"></BinaryString>
 					<Content name="LinkedSource"><null></null></Content>
-					<string name="Name">ColorPallete</string>
-					<string name="ScriptGuid">{D359C990-2206-4D56-B722-17212E839702}</string>
+					<string name="Name">ColorPalette</string>
+					<string name="ScriptGuid">{2FA53223-87E6-4330-961B-451791D3BA11}</string>
 					<ProtectedString name="Source"><![CDATA[return {
     Red = Color3.fromRGB(232, 17, 35),
     Orange = Color3.fromRGB(255, 140, 0),

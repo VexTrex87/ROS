@@ -2,6 +2,7 @@ local Interface = {}
 
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local StarterGui = game:GetService("StarterGui")
 
 local Helper = require(ReplicatedStorage.Modules.Helper)
 local ColorPalette = require(ReplicatedStorage.Configuration.ColorPalette)
@@ -14,6 +15,7 @@ function Interface.Create()
         Name = "Interface",
     })
     interface.Parent = localPlayer.PlayerGui
+    StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.All, false)
 end
 
 function Interface.CreateWindow(window)
