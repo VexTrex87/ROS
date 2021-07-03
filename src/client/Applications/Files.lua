@@ -2,7 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 
 local Assets = require(ReplicatedStorage.Configuration.Assets)
-local ColorPallete = require(ReplicatedStorage.Configuration.ColorPallete)
+local ColorPalette = require(ReplicatedStorage.Configuration.ColorPalette)
 local Helper = require(ReplicatedStorage.Modules.Helper)
 
 local localPlayer = Players.LocalPlayer
@@ -28,7 +28,7 @@ function Files.New()
         local configuration = require(library._Configuration)
         local libraryButton = Helper.createElement("ImageButton", {
             AutoButtonColor = false,
-            BackgroundColor3 = ColorPallete.LighterBlack,
+            BackgroundColor3 = ColorPalette.LighterBlack,
             BackgroundTransparency = 1,
             Name = library.Name,
             Size = UDim2.new(1, 0, 0, 40),
@@ -69,14 +69,14 @@ function Files.New()
 
     self.Window = Helper.createElement("Frame", {
         AnchorPoint = Vector2.new(0.5, 0.5),
-        BackgroundColor3 = ColorPallete.Black,
+        BackgroundColor3 = ColorPalette.Black,
         Name = "Files",
         Position = UDim2.new(0.5, 0, 0.5, 0),
         Size = UDim2.new(0.8, 0, 0.8, 0),
     }, {
         UICorner = Helper.createUICorner(UDim.new(0, 3)),
         Sidebar = Helper.createElement("Frame", {
-            BackgroundColor3 = ColorPallete.LightBlack,
+            BackgroundColor3 = ColorPalette.LightBlack,
             Name = "Sidebar",
             Size = UDim2.new(0, 200, 1, 0),
         }, {
@@ -86,9 +86,11 @@ function Files.New()
                 BackgroundTransparency = 1,
                 Position = UDim2.new(0, 0, 0.5, 0),
                 Size = UDim2.new(1, 0, 1, -40),
+                Image = nil,
             }, sidebarChildren)
         })
     })
+    self.Window = Interface.CreateWindow(self.Window)
     self.Window.Parent = localPlayer.PlayerGui.Interface
 
     return self

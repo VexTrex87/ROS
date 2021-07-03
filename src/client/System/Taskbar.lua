@@ -3,7 +3,7 @@ local Taskbar = {}
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local ColorPallete = require(ReplicatedStorage.Configuration.ColorPallete)
+local ColorPalette = require(ReplicatedStorage.Configuration.ColorPalette)
 local Assets = require(ReplicatedStorage.Configuration.Assets)
 local Helper = require(ReplicatedStorage.Modules.Helper)
 local localPlayer = Players.LocalPlayer
@@ -23,7 +23,7 @@ function Taskbar.Create()
         local source = require(application)
         local icon = Helper.createElement("ImageButton", {
             AutoButtonColor = false,
-            BackgroundColor3 = ColorPallete.Black,
+            BackgroundColor3 = ColorPalette.Black,
             BackgroundTransparency = 0.2,
             Name = application.Name,
             Visible = source.IsOnTaskbar,
@@ -39,6 +39,16 @@ function Taskbar.Create()
                 Size = UDim2.new(0.7, 0, 0.7, 0),
                 Image = source.Icon or Assets.No_Icon,
                 ScaleType = Enum.ScaleType.Crop
+            }),
+            Opened = Helper.createElement("Frame", {
+                BackgroundColor3 = ColorPalette.Black,
+                BackgroundTransparency = 0.3,
+                Name = "Opened",
+                Position = UDim2.new(0, 0, 1, 2),
+                Size = UDim2.new(1, 0, 0, 4),
+                Visible = false,
+            }, {
+                UICorner = Helper.createUICorner(UDim.new(0, 3))
             })
         })
 
@@ -59,7 +69,12 @@ function Taskbar.Create()
         end)
 
         icon.MouseButton1Click:Connect(function()
-            source.New()
+            local currentWindow = localPlayer.PlayerGui.Interface:FindFirstChild(application.Name)
+            if currentWindow then
+                currentWindow.Visible = true
+            else
+                source.New()
+            end
         end)
 
         table.insert(icons, icon)

@@ -33,6 +33,11 @@ hash = "4c163d96c3415cec72ee49570884932eaff2ef1ebfa6cdf126f463f6cd55d1e6"
 id = 7028033723
 packable = false
 
+[inputs."assets/Close_Icon.png"]
+hash = "dd406bfe5375b7e65d5f0fd7fe4846518af8727d96fa27d18f43bcb9dab60878"
+id = 7039234799
+packable = false
+
 [inputs."assets/Document_Type_Icon.png"]
 hash = "33ab15d1aff63f7b8c1f9d476e012fc6ab871432b2e25e086c521fa2916ca86c"
 id = 7038510431
@@ -46,6 +51,16 @@ packable = false
 [inputs."assets/LockScreen.png"]
 hash = "7486101845fd589467b065fc664c7b660ec415b54173d992b939bfb38093ae68"
 id = 7029546390
+packable = false
+
+[inputs."assets/Maximize_Icon.png"]
+hash = "4015cb9df01f705040045259a5399ee07df0ee9915ce5af1d9e6e6cb21d57550"
+id = 7039234845
+packable = false
+
+[inputs."assets/Minimize_Icon.png"]
+hash = "bc907245c92a3ae7a221308a9213e3f956ed61d69357a4a129213885f346a3d5"
+id = 7039234891
 packable = false
 
 [inputs."assets/No_Icon.png"]
