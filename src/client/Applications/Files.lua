@@ -38,17 +38,17 @@ function Files.New()
                 AnchorPoint = Vector2.new(0, 0.5),
                 BackgroundTransparency = 1,
                 Name = "Icon",
-                Position = UDim2.new(0, 10, 0.5, 0),
-                Size = UDim2.new(0, 20, 0, 20),
+                Position = UDim2.new(0, 15, 0.5, 0),
+                Size = UDim2.new(0, 25, 0, 25),
                 Image = configuration["Icon"],
                 ScaleType = Enum.ScaleType.Crop,
             }),
             TextLabel = Helper.createElement("TextLabel", {
                 AnchorPoint = Vector2.new(0, 0.5),
                 BackgroundTransparency = 1,
-                Position = UDim2.new(0, 45, 0.5, 0),
+                Position = UDim2.new(0, 50, 0.5, 0),
                 Size = UDim2.new(1, -40, 0.7, 0),
-                Font = Enum.Font.SourceSansSemibold,
+                Font = Enum.Font.SourceSans,
                 Text = library.Name,
                 TextColor3 = Color3.fromRGB(255, 255, 255),
                 TextSize = 20,
@@ -78,7 +78,7 @@ function Files.New()
         Sidebar = Helper.createElement("Frame", {
             BackgroundColor3 = ColorPallete.LightBlack,
             Name = "Sidebar",
-            Size = UDim2.new(0, 250, 1, 0),
+            Size = UDim2.new(0, 200, 1, 0),
         }, {
             UICorner = Helper.createUICorner(UDim.new(0, 3)),
             Frame = Helper.createElement("Frame", {
